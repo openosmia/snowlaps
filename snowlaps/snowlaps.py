@@ -12,12 +12,14 @@ from typing import Union
 import joblib
 import tensorflow as tf
 import time
+import pysolar
+import pytz
+import tzwhere
 
 
 class Snowlaps:
     def __init__(
         self,
-        albedo_spectra_path: str = None,
         emulator_path: str = "../data/emulator/x.h5",
         scaler_path: str = "../data/scaler/x.save",
     ) -> None:
@@ -34,20 +36,17 @@ class Snowlaps:
 
         self.emulator_path = emulator_path
         self.scaler_path = scaler_path
-        self.albedo_spectra_path = albedo_spectra_path
 
-        self.albedo_spectra = self.read_data(albedo_spectra_path)
-
-        self.emulator = self.initialize_emulator(self.emulator_path)
-        self.scaler = self.initialize_scaler(self.scaler_path)
+        self.emulator = self.load_emulator(self.emulator_path)
+        self.scaler = self.load_scaler(self.scaler_path)
 
         return None
 
-    def initialize_emulator(self, emulator_path):
+    def load_emulator(self, emulator_path):
         emulator = tf.keras.models.load_model(emulator_path)
         return emulator
 
-    def initialize_scaler(self, scaler_path):
+    def load_scaler(self, scaler_path):
         scaler = joblib.load(scaler_path)
         return scaler
 
@@ -64,17 +63,29 @@ class Snowlaps:
         return data
 
     def run(self, parameters):
-        emulator_results = self.emulator(parameters)
+        transformed_parameters = self.scaler.transform(parameters)
+        emulator_results = self.emulator(transformed_parameters)
         return emulator_results
+
+    def compute_SZA(self, longitude, latitude, date, time):
+        tz = tzwhere.tzwhere()
+        time_zone = tz.tzNameAt(longitude, latitude)
+        time_zone_tzobj = pytz.timezone(time_zone)
+        date_pyobj = pd.Timestamp(date + " " + time, tz=time_zone_tzobj).to_pydatetime()
+
+        sza = 90 - pysolar.solar.get_altitude(latitude, longitude, date_pyobj)
+
+        return sza
 
     def optimize(
         self,
-        spectra=self.albedo_spectra,
+        albedo_spectra_path,
         nb_optimization_steps=1000,
         nb_optimization_repeats=20,
         optimizer=tf.keras.optimizers.Adagrad(learning_rate=1.0),
         optimization_init=None,
         gradient_mask=[0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        sza_list=None,
         save_results=True,
     ) -> None:
         def get_minimum_MAE_index(sub_df):
@@ -86,7 +97,9 @@ class Snowlaps:
 
             return global_index
 
-        nb_spectra = len(spectra)
+        albedo_spectra = self.read_data(albedo_spectra_path)
+
+        nb_spectra = len(albedo_spectra)
 
         constant_gradients = tf.constant(
             np.tile(
@@ -115,7 +128,7 @@ class Snowlaps:
                 # compute residuals on all spextra
                 residuals = (
                     self.emulator(optimization_results)[:, 6 : 6 + 100]
-                    - spectra[:, :100]
+                    - albedo_spectra[:, :100]
                 )
 
                 # cost is computed as integrated squared error (coded by hand to vectorize)
@@ -156,7 +169,7 @@ class Snowlaps:
                 "bc": results_transformed[:, 4],
                 "dust": results_transformed[:, 5],
             },
-            index=np.tile(spectra.columns, 20),
+            index=np.tile(albedo_spectra.columns, 20),
         )
 
         # add batch indices

@@ -11,4 +11,4 @@ from snowlaps import SnowLaps
 input_path = "../../data/inputs/ex01_snowlaps_inputs.csv"
 
 my_emulator = SnowLaps()
-emulator_results = my_emulator.run()
+emulator_results = my_emulator.run(parameters=input_path)
