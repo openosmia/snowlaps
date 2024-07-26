@@ -69,7 +69,7 @@ class Snowlaps:
 
     def optimize(
         self,
-        spectra=self.spectra,
+        spectra=self.albedo_spectra,
         nb_optimization_steps=1000,
         nb_optimization_repeats=20,
         optimizer=tf.keras.optimizers.Adagrad(learning_rate=1.0),
