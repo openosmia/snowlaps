@@ -17,7 +17,7 @@ import time
 class Snowlaps:
     def __init__(
         self,
-        albedo_spectra_path: str,
+        albedo_spectra_path: str = None,
         emulator_path: str = "../data/emulator/x.h5",
         scaler_path: str = "../data/scaler/x.save",
     ) -> None:
@@ -63,9 +63,13 @@ class Snowlaps:
 
         return data
 
+    def run(self, parameters):
+        emulator_results = self.emulator(parameters)
+        return emulator_results
+
     def optimize(
         self,
-        spectra,
+        spectra=self.spectra,
         nb_optimization_steps=1000,
         nb_optimization_repeats=20,
         optimizer=tf.keras.optimizers.Adagrad(learning_rate=1.0),
