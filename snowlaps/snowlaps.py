@@ -17,7 +17,7 @@ import pytz
 import tzwhere
 
 
-class Snowlaps:
+class SnowlapsEmulator:
     def __init__(
         self,
         emulator_path: str = "../data/emulator/x.h5",
