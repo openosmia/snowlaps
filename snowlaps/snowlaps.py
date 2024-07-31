@@ -20,8 +20,8 @@ import tzwhere
 class SnowlapsEmulator:
     def __init__(
         self,
-        emulator_path: str = "../data/emulator/x.h5",
-        scaler_path: str = "../data/scaler/x.save",
+        emulator_path: str = "./data/emulator/mlp_snw_alg_3.h5",
+        scaler_path: str = "./data/scaler/minmax_scaler.save",
     ) -> None:
         """
         :param albedo_spectra_path: full path to file containing albedo spectra.
@@ -63,8 +63,14 @@ class SnowlapsEmulator:
         return data
 
     def run(self, parameters):
-        transformed_parameters = self.scaler.transform(parameters)
-        emulator_results = self.emulator(transformed_parameters)
+        # if only one list of parameters, parameters needs to be repeated to be 2D
+        if not all(isinstance(elem, list) for elem in parameters):
+            transformed_parameters = self.scaler.transform([parameters, parameters])
+            emulator_results = np.vstack(self.emulator(transformed_parameters))[0, :]
+        else:
+            transformed_parameters = self.scaler.transform(parameters)
+            emulator_results = np.vstack(self.emulator(transformed_parameters))
+
         return emulator_results
 
     def compute_SZA(self, longitude, latitude, date, time):
