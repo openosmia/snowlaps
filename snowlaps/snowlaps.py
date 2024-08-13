@@ -43,10 +43,26 @@ class SnowlapsEmulator:
         return None
 
     def load_emulator(self, emulator_path):
+        """
+        :param emulator_path: full path to file containing the emulator.
+        :type emulator_path: str
+
+        :return: the emulator object.
+        :rtype: pd.DataFrame -to fix-
+        """
+
         emulator = tf.keras.models.load_model(emulator_path)
         return emulator
 
     def load_scaler(self, scaler_path):
+        """
+        :param scaler_path: full path to file containing the scaler.
+        :type scaler_path: str
+
+        :return: the scaler object.
+        :rtype: pd.DataFrame -to fix-
+        """
+
         scaler = joblib.load(scaler_path)
         return scaler
 
@@ -63,6 +79,15 @@ class SnowlapsEmulator:
         return data
 
     def run(self, parameters):
+        """
+        :param parameters: list of emulator parameters with the format [...].
+        :type data_path: str
+
+        :return: a 2D matrix containing emulator results with rows corresponding
+                 to the number of runs, and columns to the number of emulator
+                 wavelengths.
+        :rtype: np.ndarray
+        """
         # if only one list of parameters, parameters needs to be repeated to be 2D
         if not all(isinstance(elem, list) for elem in parameters):
             transformed_parameters = self.scaler.transform([parameters, parameters])
@@ -92,6 +117,7 @@ class SnowlapsEmulator:
         optimization_init=None,
         gradient_mask=[0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         sza_list=None,
+        spectra_metadata=None,
         save_results=True,
     ) -> None:
         def get_minimum_MAE_index(sub_df):
@@ -104,6 +130,17 @@ class SnowlapsEmulator:
             return global_index
 
         albedo_spectra = self.read_data(albedo_spectra_path)
+
+        if sza_list is None and spectra_metadata is not None:
+            sza_list = [
+                self.compute_SZA(self, longitude, latitude, date, time)
+                for date in dates
+            ]
+
+        else:
+            raise ValueError(
+                "Acquisition dates, times and locations should be given if no SZA"
+            )
 
         nb_spectra = len(albedo_spectra)
 
