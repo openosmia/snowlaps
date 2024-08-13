@@ -48,7 +48,7 @@ class SnowlapsEmulator:
         :type emulator_path: str
 
         :return: the emulator object.
-        :rtype: pd.DataFrame -to fix-
+        :rtype: pd.DataFrame TODO
         """
 
         emulator = tf.keras.models.load_model(emulator_path)
@@ -60,7 +60,7 @@ class SnowlapsEmulator:
         :type scaler_path: str
 
         :return: the scaler object.
-        :rtype: pd.DataFrame -to fix-
+        :rtype: pd.DataFrame TODO
         """
 
         scaler = joblib.load(scaler_path)
@@ -99,6 +99,25 @@ class SnowlapsEmulator:
         return emulator_results
 
     def compute_SZA(self, longitude, latitude, date, time):
+        """
+        Compute the Solar Zenith Angle (SZA) at a given location and time.
+        SZA is one of the emulator inputs.
+
+        :param longitude: Longitude at which the spectrum was acquired.
+        :type longitude: float
+
+        :param latitude: Latitude at which the spectrum was acquired.
+        :type latitude: float
+
+        :param date: Date at which the spectrum was acquired (YYYY-MM-DD)
+        :type date: str
+
+        :param time: Time at which the spectrum was acquired (HH:MM or HH:MM:SS)
+        :type time: str
+
+        :return: the Solar Zenith Angle (SZA).
+        :rtype: float
+        """
         tz = tzwhere.tzwhere()
         time_zone = tz.tzNameAt(longitude, latitude)
         time_zone_tzobj = pytz.timezone(time_zone)
@@ -120,7 +139,40 @@ class SnowlapsEmulator:
         spectra_metadata=None,
         save_results=True,
     ) -> None:
+        """
+
+        TODO
+
+        Compute the Solar Zenith Angle (SZA) at a given location and time.
+        SZA is one of the emulator inputs.
+
+        :param longitude: Longitude at which the spectrum was acquired.
+        :type longitude: float
+
+        :param latitude: Latitude at which the spectrum was acquired.
+        :type latitude: float
+
+        :param date: Date at which the spectrum was acquired (YYYY-MM-DD)
+        :type date: str
+
+        :param time: Time at which the spectrum was acquired (HH:MM or HH:MM:SS)
+        :type time: str
+
+        :return: the Solar Zenith Angle (SZA).
+        :rtype: float
+        """
+
         def get_minimum_MAE_index(sub_df):
+            """
+
+            TODO
+
+            Compute the Solar Zenith Angle (SZA) at a given location and time.
+            SZA is one of the emulator inputs.
+
+            :return: the Solar Zenith Angle (SZA).
+            :rtype: float
+            """
             index_minimum = np.where(
                 sub_df["mean_MAE"] == np.nanmin(sub_df["mean_MAE"])
             )[0][0]
@@ -239,13 +291,13 @@ class SnowlapsEmulator:
         if save_results:
             time_tag = time.strftime("%Y%m%d_%H%M%S")
             fullbatch_optimization_results.to_csv(
-                f"../../data/results/snowlaps_fullbatch_optimizations_{time_tag}.csv"
+                f"../../data/optimization_results/snowlaps_fullbatch_optimizations_{time_tag}.csv"
             )
             best_optimization_results.to_csv(
-                f"../../data/results/snowlaps_best_optimizations_{time_tag}.csv"
+                f"../../data/optimization_results/snowlaps_best_optimizations_{time_tag}.csv"
             )
             best_emulator_spectra.to_csv(
-                f"../../data/results/snowlaps_best_emulator_spectra_{time_tag}.csv"
+                f"../../data/optimization_results/snowlaps_best_emulator_spectra_{time_tag}.csv"
             )
 
         return (
