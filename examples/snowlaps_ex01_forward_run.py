@@ -6,9 +6,9 @@
 
 """
 
-from snowlaps import SnowLaps
+from snowlaps.snowlaps import SnowlapsEmulator
 
-input_path = "../../data/inputs/ex01_snowlaps_inputs.csv"
+example_set_of_paramters = [38, 500, 110000, 0.015, 800, 78000]
 
-my_emulator = SnowLaps()
-emulator_results = my_emulator.run(parameters=input_path)
+my_emulator = SnowlapsEmulator()
+emulator_results = my_emulator.run(parameters=example_set_of_paramters)

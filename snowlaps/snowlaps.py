@@ -231,10 +231,26 @@ class SnowlapsEmulator:
 
         # if no optimization initializations provided, set random ones
         if optimization_init is None:
-            variable_inits = np.random.uniform(
+            variables_init_without_sza = np.random.uniform(
                 size=(nb_spectra * nb_optimization_repeats, 6)
             )
-            optimization_results = tf.Variable(variable_inits)
+
+        # sza initalizations (constant known SZA)
+        sza_inits = tf.Variable(
+            np.tile(
+                sza_spectra_transformed[:nb_spectra], (1, nb_optimization_repeats)
+            ).T,
+            dtype=tf.float32,
+        )
+
+        # spectrum to fit
+        albedo_spectra_batched = tf.Variable(
+            np.tile(albedo_spectra[5::10, :nb_spectra], (1, nb_optimization_repeats)).T,
+            dtype=tf.float32,
+        )
+
+        variables_init = np.concatenate((sza_inits, variables_init_without_sza), axis=1)
+        optimization_results = tf.Variable(variables_init)
 
         # ------------ optimization start
         start_time = time.time()
@@ -248,7 +264,7 @@ class SnowlapsEmulator:
                 # compute residuals on all spextra
                 residuals = (
                     self.emulator(optimization_results)[:, 6 : 6 + 100]
-                    - albedo_spectra[:, :100]
+                    - albedo_spectra_batched[:, :100]
                 )
 
                 # cost is computed as integrated squared error (coded by hand to vectorize)
