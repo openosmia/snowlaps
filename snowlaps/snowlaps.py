@@ -14,7 +14,9 @@ import tensorflow as tf
 import time
 import pysolar
 import pytz
-import tzwhere
+from geopy.geocoders import Nominatim
+from timezonefinder import TimezoneFinder
+from datetime import datetime
 
 
 class SnowlapsEmulator:
@@ -118,12 +120,18 @@ class SnowlapsEmulator:
         :return: the Solar Zenith Angle (SZA).
         :rtype: float
         """
-        tz = tzwhere.tzwhere()
-        time_zone = tz.tzNameAt(longitude, latitude)
-        time_zone_tzobj = pytz.timezone(time_zone)
-        date_pyobj = pd.Timestamp(date + " " + time, tz=time_zone_tzobj).to_pydatetime()
 
-        sza = 90 - pysolar.solar.get_altitude(latitude, longitude, date_pyobj)
+        if not self.tzf:
+            self.tzf = TimezoneFinder()
+
+        time_zone = tzf.timezone_at(lng=longitude, lat=latitude)
+        time_zone_tzobj = pytz.timezone(time_zone)
+        date_pyobj = datetime.strptime(date + " " + time, "%Y-%m-%d %H:%M").replace(
+            tzinfo=time_zone_tzobj
+        )
+        solar_altitude = pysolar.solar.get_altitude(latitude, longitude, date_pyobj)
+
+        sza = np.round(90 - solar_altitude, 1)
 
         return sza
 
@@ -136,7 +144,7 @@ class SnowlapsEmulator:
         optimization_init=None,
         gradient_mask=[0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         sza_list=None,
-        spectra_metadata=None,
+        spectra_metadata_path=None,
         save_results=True,
     ) -> None:
         """
@@ -147,7 +155,9 @@ class SnowlapsEmulator:
         SZA is one of the emulator inputs.
 
         :param longitude: Longitude at which the spectrum was acquired.
-        :type longitude: float
+        :type longitude: float        # if not self.tz:
+        #     self.tz = tzwhere.tzwhere()
+
 
         :param latitude: Latitude at which the spectrum was acquired.
         :type latitude: float
@@ -184,9 +194,10 @@ class SnowlapsEmulator:
         albedo_spectra = self.read_data(albedo_spectra_path)
 
         if sza_list is None and spectra_metadata is not None:
+            self.spectra_metadata = self.read_data(spectra_metadata_path)
             sza_list = [
-                self.compute_SZA(self, longitude, latitude, date, time)
-                for date in dates
+                self.compute_SZA(longitude, latitude, date, time)
+                for spectrum_metadata in spectra_metadata
             ]
 
         else:
