@@ -79,7 +79,7 @@ class SnowlapsEmulator:
         :return: DataFrame containing data to read.
         :rtype: pd.DataFrame
         """
-        data = pd.read_csv(data_path)
+        data = pd.read_csv(data_path, index_col=0)
 
         return data
 
@@ -155,9 +155,7 @@ class SnowlapsEmulator:
         SZA is one of the emulator inputs.
 
         :param longitude: Longitude at which the spectrum was acquired.
-        :type longitude: float        # if not self.tz:
-        #     self.tz = tzwhere.tzwhere()
-
+        :type longitude: float
 
         :param latitude: Latitude at which the spectrum was acquired.
         :type latitude: float
@@ -219,7 +217,7 @@ class SnowlapsEmulator:
             for sza in sza_list
         ]
 
-        nb_spectra = len(albedo_spectra)
+        nb_spectra = albedo_spectra.shape[1]
 
         constant_gradients = tf.constant(
             np.tile(
@@ -232,7 +230,7 @@ class SnowlapsEmulator:
         # if no optimization initializations provided, set random ones
         if optimization_init is None:
             variables_init_without_sza = np.random.uniform(
-                size=(nb_spectra * nb_optimization_repeats, 6)
+                size=(nb_spectra * nb_optimization_repeats, 5)
             )
 
         # sza initalizations (constant known SZA)
@@ -244,8 +242,9 @@ class SnowlapsEmulator:
         )
 
         # spectrum to fit
+        albedo_spectra_arr = albedo_spectra.to_numpy()
         albedo_spectra_batched = tf.Variable(
-            np.tile(albedo_spectra[5::10, :nb_spectra], (1, nb_optimization_repeats)).T,
+            np.tile(albedo_spectra_arr[5::10, :], (1, nb_optimization_repeats)).T,
             dtype=tf.float32,
         )
 
@@ -326,19 +325,24 @@ class SnowlapsEmulator:
             indexes_minimum_batch_MAE
         ]
 
+        best_optimization_parameters = self.scaler.transform(
+            best_optimization_results.iloc[:, 1:-2].values
+        )
+
         # re-evaluate modeled spectra to compare with observations
-        best_emulator_spectra = self.emulator(best_optimization_results)
+        best_emulator_spectra = self.emulator(best_optimization_parameters)
+        best_emulator_spectra_arr = best_emulator_spectra.numpy()
 
         if save_results:
             time_tag = time.strftime("%Y%m%d_%H%M%S")
             fullbatch_optimization_results.to_csv(
-                f"../../data/optimization_results/snowlaps_fullbatch_optimizations_{time_tag}.csv"
+                f"./data/optimization_results/snowlaps_fullbatch_optimizations_{time_tag}.csv"
             )
             best_optimization_results.to_csv(
-                f"../../data/optimization_results/snowlaps_best_optimizations_{time_tag}.csv"
+                f"./data/optimization_results/snowlaps_best_optimizations_{time_tag}.csv"
             )
-            best_emulator_spectra.to_csv(
-                f"../../data/optimization_results/snowlaps_best_emulator_spectra_{time_tag}.csv"
+            pd.DataFrame(best_emulator_spectra_arr).to_csv(
+                f"./data/optimization_results/snowlaps_best_emulator_spectra_{time_tag}.csv"
             )
 
         return (
