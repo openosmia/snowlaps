@@ -97,12 +97,10 @@ for algae, dust, bc, reff, zen, lwc in zip(algList,
             impurities,
             model_config,
         )
-
         # now call the solver of your choice (here AD solver)
         outputs = adding_doubling_solver(
             tau, ssa, g, L_snw, ice, illumination, model_config
         )
-
         # spectral albedo appended to output array
         predicted_spectra_biosnicar.append(np.float16(outputs.albedo[9:221]))
         counter += 1
@@ -144,18 +142,6 @@ axtop.yaxis.tick_right()
 axtop.ticklabel_format(style='sci', axis='y', scilimits=(0,0), useMathText=True)
 axtop.yaxis.offsetText.set_fontsize(ticks_label_size)
 axtop.grid(alpha=0.3)
-# axtop.annotate(
-#      "(b)",
-#      xy=(0.94, 0.9),
-#      xycoords="axes fraction",
-#      fontsize=label_size - 5,
-#      ha="center",
-#      va="top",
-#      backgroundcolor="none",
-#      bbox=dict(
-#          facecolor="none", edgecolor="none", boxstyle="square, pad=0.2", alpha=0.8
-#      ),
-#  )
 
 
 # 4. Albedo with min residuals
@@ -176,7 +162,6 @@ ax[1].legend(loc="upper right", fontsize=15)
 divider = make_axes_locatable(ax[1])
 axtop = divider.append_axes("top", size="40%", pad=0.1, sharex = ax[1])
 axtop.plot(wvs, np.abs(predicted_spectra_emulator[1] - predicted_spectra_biosnicar[1]), color='black', label='AE')
-# axtop.axhline(y=np.mean(np.abs(residuals[min_position])), ls= '--',color='black', label='mean AE', alpha=0.5)
 axtop.tick_params(axis='y', labelsize=ticks_label_size)
 axtop.yaxis.tick_right()
 axtop.yaxis.set_label_position("right")
@@ -191,18 +176,6 @@ axtop.set_ylim(-2.75e-5,  2e-4)
 axtop.ticklabel_format(style='sci', axis='y', scilimits=(0,0), useMathText=True)
 axtop.yaxis.offsetText.set_fontsize(ticks_label_size)
 axtop.grid(alpha=0.3)
-# axtop.annotate(
-#      "(c)",
-#      xy=(0.94, 0.9),
-#      xycoords="axes fraction",
-#      fontsize=label_size - 5,
-#      ha="center",
-#      va="top",
-#      backgroundcolor="none",
-#      bbox=dict(
-#          facecolor="none", edgecolor="none", boxstyle="square, pad=0.2", alpha=0.8
-#      ),
-#  )
 
 fig.tight_layout()
 
