@@ -18,6 +18,7 @@ from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
 from datetime import datetime
 import os
+import sklearn
 
 
 class SnowlapsEmulator:
@@ -27,17 +28,12 @@ class SnowlapsEmulator:
         scaler_path: str = "./data/scaler/minmax_scaler.save",
     ) -> None:
         """
-        :param albedo_spectra_path: full path to file containing albedo spectra.
-        :type albedo_spectra_path: str
-
         :param emulator_path: full path to emulator.
         :type emulator_path: str
 
         :param scaler_path: full path to scaler.
         :type scaler_path: str
         """
-
-        print(os.getcwd())
 
         self.emulator_path = emulator_path
         self.scaler_path = scaler_path
@@ -47,25 +43,25 @@ class SnowlapsEmulator:
 
         return None
 
-    def load_emulator(self, emulator_path):
+    def load_emulator(self, emulator_path: str) -> tf.keras.models:
         """
         :param emulator_path: full path to file containing the emulator.
         :type emulator_path: str
 
         :return: the emulator object.
-        :rtype: pd.DataFrame TODO
+        :rtype: tf.keras.models
         """
 
         emulator = tf.keras.models.load_model(emulator_path)
         return emulator
 
-    def load_scaler(self, scaler_path):
+    def load_scaler(self, scaler_path: str) -> sklearn.preprocessing:
         """
         :param scaler_path: full path to file containing the scaler.
         :type scaler_path: str
 
         :return: the scaler object.
-        :rtype: pd.DataFrame TODO
+        :rtype: sklearn.preprocessing
         """
 
         scaler = joblib.load(scaler_path)
@@ -83,13 +79,16 @@ class SnowlapsEmulator:
 
         return data
 
-    def run(self, parameters):
+    def run(self, parameters: list) -> np.ndarray:
         """
-        :param parameters: list of emulator parameters with the format [...].
-        :type data_path: str
+        :param parameters: list of emulator parameters where each list has parameters
+                           in the following order: [Solar Zenith Angle (SZA), optical
+                           radius of the snow grains, red algal concentration, liquid
+                           water content, black carbon concentration, dust concentration].
+        :type data_path: list
 
         :return: a 2D matrix containing emulator results with rows corresponding
-                 to the number of runs, and columns to the number of emulator
+                 to the number of runs passed as inputs, and columns to the emulator
                  wavelengths.
         :rtype: np.ndarray
         """
@@ -148,38 +147,78 @@ class SnowlapsEmulator:
         save_results=True,
     ) -> None:
         """
+        Find the emulator variables and associated emulator albedo spectra that best
+        reproduce albedo spectra passed as inputs.
 
-        TODO
+        :param albedo_spectra_path: Full path to file containing albedo spectra with
+                                    wavelengths as indexes, and measurement tag/name as
+                                    columns.
+                                    See i.e. ./data/spectra/Chevrollier_et_al_2024_TC_spectra.csv.
+        :type albedo_spectra_path: str
 
-        Compute the Solar Zenith Angle (SZA) at a given location and time.
-        SZA is one of the emulator inputs.
+        :param nb_optimization_steps: Number of times the fit between emulator and albedo
+                                      spectra passed as inputs is being updated. The larger
+                                      this number the better each individual fit, but also the
+                                      slower the full optimization. Default to 1000.
+        :type nb_optimization_steps: int, optional
 
-        :param longitude: Longitude at which the spectrum was acquired.
-        :type longitude: float
+        :param nb_optimization_repeats: Number of times the optimization will be repeated for
+                                        each albedo spectrum.The larger this number the better
+                                        the best fit for a given spectrum, but also the slower
+                                        the optimization. Default to 20.
+        :type nb_optimization_repeats: int, optional
 
-        :param latitude: Latitude at which the spectrum was acquired.
-        :type latitude: float
+        :param optimizer: Keras optimizer to use for the gradient descent algorithm. Default to
+                          Keras Adagrad optimizer with a learning rate of 1.0.
+        :type optimizer: keras.src.optimizers, optional
 
-        :param date: Date at which the spectrum was acquired (YYYY-MM-DD)
-        :type date: str
+        :param optimization_init: List of initial values for each input variable of the emulator.
+                                  Default to None and random initialisations.
+        :type optimization_init: list, optional
 
-        :param time: Time at which the spectrum was acquired (HH:MM or HH:MM:SS)
-        :type time: str
+        :param gradient_mask: Boolean mask to enable (1) or freeze (0) the optimization of each
+                              input variable of the emulator. Default to SZA frozen and all other
+                              variables enabled, as SZA is either given or computed.
+        :type gradient_mask: list, optional
 
-        :return: the Solar Zenith Angle (SZA).
-        :rtype: float
+        :param sza_list: List of Solar Zenith Angle (SZA) values for each albedo spectrum passed as
+                         input. Default to None, and hence SZA computed based on albedo spectra
+                         metadata (see spectra_metadata_path).
+        :type sza_list: list, optional
+
+        :param spectra_metadata_path: Full path to file containing the metadata for each albedo
+                                      spectrum passed as input, with columns ["tag", "longitude",
+                                      "latitude", "date", "time"].
+                                      See i.e. ./data/spectra/Chevrollier_et_al_2024_TC_metadata.csv.
+        :type spectra_metadata_path: str, optional
+
+        :param save_results: To save optimization results in ./data/optimization_results or not.
+                             Default to True.
+        :type spectra_metadata_path: bool, optional
+
+
+        :return: three-element tuple. fullbatch_optimization_results contains the mean MAE and
+                                      associated optimized emulator variables of each optimization
+                                      repeat of each albedo spectrum passed as input, hence the
+                                      number of lines corresponds to the number of input albedo
+                                      spectra times the number of optimization_repeats.
+                                      best_optimization_results contains the lowest mean MAE and
+                                      associated best optimized emulator variables from the batch
+                                      of optimization repeats of each albedo spectrum passed as
+                                      input, hence number of lines equals the number of input albedo
+                                      spectra.
+                                      best_emulator_spectra contains the emulator albedo spectra
+                                      resulting from the best optimization results, with the same
+                                      shape and formatting as the file albedo_spectra_path.
+        :rtype: tuple (pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, numpy.ndarray)
         """
 
         def get_minimum_MAE_index(sub_df):
-            """
+            """Get the global index of the minimum MAE of each batch
 
-            TODO
+            :return: the global index.
+            :rtype: int
 
-            Compute the Solar Zenith Angle (SZA) at a given location and time.
-            SZA is one of the emulator inputs.
-
-            :return: the Solar Zenith Angle (SZA).
-            :rtype: float
             """
             index_minimum = np.where(
                 sub_df["mean_MAE"] == np.nanmin(sub_df["mean_MAE"])
@@ -330,8 +369,12 @@ class SnowlapsEmulator:
         )
 
         # re-evaluate modeled spectra to compare with observations
-        best_emulator_spectra = self.emulator(best_optimization_parameters)
-        best_emulator_spectra_arr = best_emulator_spectra.numpy()
+        best_emulator_spectra_tf = self.emulator(best_optimization_parameters)
+        best_emulator_spectra = pd.DataFrame(
+            best_emulator_spectra_tf.numpy().T,
+            index=albedo_spectra.index,
+            columns=albedo_spectra.columns,
+        )
 
         if save_results:
             time_tag = time.strftime("%Y%m%d_%H%M%S")
@@ -341,7 +384,7 @@ class SnowlapsEmulator:
             best_optimization_results.to_csv(
                 f"./data/optimization_results/snowlaps_best_optimizations_{time_tag}.csv"
             )
-            pd.DataFrame(best_emulator_spectra_arr).to_csv(
+            pd.DataFrame(best_emulator_spectra).to_csv(
                 f"./data/optimization_results/snowlaps_best_emulator_spectra_{time_tag}.csv"
             )
 
