@@ -6,15 +6,15 @@
 
 """
 
-#%%
 
 import sys
 import os
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
 import numpy as np
-path_to_snowlaps = '/Users/au660413/Documents/AU_PhD/snowlaps-emulator'
-path_to_biosnicar = '/Users/au660413/Desktop/github/biosnicar-py'
+
+path_to_snowlaps = ''
+path_to_biosnicar = ''
 
 os.chdir(path_to_snowlaps)
 sys.path.append(path_to_biosnicar)
@@ -44,7 +44,6 @@ emulator_config_file = './data/inputs/snicar_config_for_emulator.yaml'
     ) = setup_snicar(emulator_config_file)
 
 
-# reshape params for snicar
 zen = params_higher_residuals[0]
 reff = params_higher_residuals[1]
 algae = params_higher_residuals[2]
@@ -55,8 +54,6 @@ dust = params_higher_residuals[5]
 ice.rds = [reff] * len(ice.dz)
 ice.lwc = [lwc] * len(ice.dz)
 illumination.solzen = zen
-# remember to recalculate irradiance values when any of the dependency values change
-# i.e. irradiance is derived from solzen, so call the recalc func after updating solzen
 illumination.calculate_irradiance()
 impurities[0].conc = [
     bc,
@@ -80,14 +77,13 @@ tau, ssa, g, L_snw = mix_in_impurities(
     impurities,
     model_config,
 )
-# now call the solver of your choice (here AD solver)
+
 outputs = adding_doubling_solver(
     tau, ssa, g, L_snw, ice, illumination, model_config
 )
-# spectral albedo appended to output array
+
 predicted_spectrum_biosnicar = np.float16(outputs.albedo[9:221])
 
-#%matplotlib qt
 fig, ax = plt.subplots(1, 1, figsize=(5,5))
 wvs = np.arange(0.295, 2.415, 0.01)
 color_plot="gray"
