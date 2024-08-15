@@ -6,29 +6,37 @@
 
 """
 
+# paths to the biosnicar model must be specified 
+path_to_biosnicar = ''
 
 import sys
-import os
+sys.path.append(path_to_biosnicar)
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
 import numpy as np
-
-path_to_snowlaps = ''
-path_to_biosnicar = ''
-
-os.chdir(path_to_snowlaps)
-sys.path.append(path_to_biosnicar)
-
 from snowlaps.snowlaps import SnowlapsEmulator
 from biosnicar.setup_snicar import setup_snicar
 from biosnicar.column_OPs import get_layer_OPs, mix_in_impurities
 from biosnicar.adding_doubling_solver import adding_doubling_solver
 
-params_higher_residuals = [35, 350, 0, 0, 0, 0]
+##############################################################################
+# example reproducing the Figure 1b from Chevrollier et al. 2024
+##############################################################################
+
+# See documentation for the order of input parameters. 
+# (0) solar zenith angle (unitless)
+# (1) optical radius of snow grain (um)
+# (2) algal concentration (cells/mL)
+# (3) liquid water content (fraction, unitless)
+# (4) black carbon concentration (ppb)
+# (5) mineral dust concentration (ppb) 
+
+params_higher_residuals_Chevrollier_2024 = [35, 350, 0, 0, 0, 0]
 
 emulator = SnowlapsEmulator()
 
-predicted_spectrum_emulator = emulator.run(params_higher_residuals)
+predicted_spectrum_emulator = emulator.run(
+    params_higher_residuals_Chevrollier_2024)
 
 
 # set up snicar with emulator config
@@ -43,13 +51,14 @@ emulator_config_file = './data/inputs/snicar_config_for_emulator.yaml'
         impurities,
     ) = setup_snicar(emulator_config_file)
 
+# run snicar with given parameters
 
-zen = params_higher_residuals[0]
-reff = params_higher_residuals[1]
-algae = params_higher_residuals[2]
-lwc = params_higher_residuals[3]
-bc = params_higher_residuals[4]
-dust = params_higher_residuals[5]
+zen = params_higher_residuals_Chevrollier_2024[0]
+reff = params_higher_residuals_Chevrollier_2024[1]
+algae = params_higher_residuals_Chevrollier_2024[2]
+lwc = params_higher_residuals_Chevrollier_2024[3]
+bc = params_higher_residuals_Chevrollier_2024[4]
+dust = params_higher_residuals_Chevrollier_2024[5]
 
 ice.rds = [reff] * len(ice.dz)
 ice.lwc = [lwc] * len(ice.dz)
@@ -58,15 +67,15 @@ illumination.calculate_irradiance()
 impurities[0].conc = [
     bc,
     0,
-]  # bc 
+]  
 impurities[1].conc = [
     algae,
     0,
-]  # alg 
+]  
 impurities[2].conc = [
     dust,
     0,
-]  # dust
+]
 
 ssa_snw, g_snw, mac_snw = get_layer_OPs(ice, model_config)
 tau, ssa, g, L_snw = mix_in_impurities(
@@ -83,6 +92,8 @@ outputs = adding_doubling_solver(
 )
 
 predicted_spectrum_biosnicar = np.float16(outputs.albedo[9:221])
+
+# make figure comparing biosnicar to the emulator
 
 fig, ax = plt.subplots(1, 1, figsize=(5,5))
 wvs = np.arange(0.295, 2.415, 0.01)
