@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import xarray as xr 
 
 
-path_to_snowlaps = '/Users/au660413/Documents/AU_PhD/snowlaps-emulator'
+path_to_snowlaps = ''
 
 spectra = pd.read_csv(f"{path_to_snowlaps}/data/spectra/Chevrollier_et_al_2024_TC_spectra.csv",
                       index_col=0)
@@ -21,7 +21,7 @@ spectra = pd.read_csv(f"{path_to_snowlaps}/data/spectra/Chevrollier_et_al_2024_T
 metadata = pd.read_csv(f"{path_to_snowlaps}/data/spectra/Chevrollier_et_al_2024_TC_metadata.csv")
 
 
-results_inversion = pd.read_csv(f'{path_to_snowlaps}/data/results/results_inversion_no_anisotropy_correction_Chevrollier2024_TC.csv', 
+results_inversion = pd.read_csv(f'{path_to_snowlaps}/data/optimization_results/results_inversion_no_anisotropy_correction_Chevrollier2024_TC.csv', 
                                 index_col=0)
 
 
@@ -219,8 +219,8 @@ ax1.set_xlim(-1,180)
 
 plt.tight_layout()
 
-plt.savefig(f"{path_to_snowlaps}/examples/figures/fig03_Chevrollier2024_TC.png", dpi=300,
-        bbox_inches='tight', pad_inches=0.1,
-        facecolor='auto', edgecolor='auto'
-    )
+# plt.savefig(f"{path_to_snowlaps}/examples/figures_Chevrollier2024_TC/fig03_Chevrollier2024_TC.png", dpi=300,
+#         bbox_inches='tight', pad_inches=0.1,
+#         facecolor='auto', edgecolor='auto'
+#     )
     
