@@ -380,7 +380,7 @@ class SnowlapsEmulator:
         best_emulator_spectra = pd.DataFrame(
             best_emulator_spectra_tf.numpy().T,
             columns=albedo_spectra.columns,
-            index=self.emlator_wavelengths,
+            index=self.emulator_wavelengths,
         )
 
         if save_results:
