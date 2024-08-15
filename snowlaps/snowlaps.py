@@ -14,11 +14,9 @@ import tensorflow as tf
 import time
 import pysolar
 import pytz
-from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
 from datetime import datetime
-import os
-import sklearn
+import sklearn.preprocessing
 
 
 class SnowlapsEmulator:
@@ -84,7 +82,8 @@ class SnowlapsEmulator:
         :param parameters: list of emulator parameters where each list has parameters
                            in the following order: [Solar Zenith Angle (SZA), optical
                            radius of the snow grains, red algal concentration, liquid
-                           water content, black carbon concentration, dust concentration].
+                           water content, black carbon concentration, dust
+                           concentration].
         :type data_path: list
 
         :return: a 2D matrix containing emulator results with rows corresponding
@@ -102,7 +101,9 @@ class SnowlapsEmulator:
 
         return emulator_results
 
-    def compute_SZA(self, longitude, latitude, date, time):
+    def compute_SZA(
+        self, longitude: float, latitude: float, date: str, time: str
+    ) -> float:
         """
         Compute the Solar Zenith Angle (SZA) at a given location and time.
         SZA is one of the emulator inputs.
@@ -136,15 +137,15 @@ class SnowlapsEmulator:
 
     def optimize(
         self,
-        albedo_spectra_path,
-        nb_optimization_steps=1000,
-        nb_optimization_repeats=20,
-        optimizer=tf.keras.optimizers.Adagrad(learning_rate=1.0),
-        optimization_init=None,
-        gradient_mask=[0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        sza_list=None,
-        spectra_metadata_path=None,
-        save_results=True,
+        albedo_spectra_path: str,
+        nb_optimization_steps: int = 1000,
+        nb_optimization_repeats: int = 20,
+        optimizer: tf.keras.optimizers = tf.keras.optimizers.Adagrad(learning_rate=1.0),
+        optimization_init: Union[list, None] = None,
+        gradient_mask: list = [0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        sza_list: Union[list, None] = None,
+        spectra_metadata_path: Union[str, None] = None,
+        save_results: bool = True,
     ) -> None:
         """
         Find the emulator variables and associated emulator albedo spectra that best
@@ -213,7 +214,7 @@ class SnowlapsEmulator:
         :rtype: tuple (pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, numpy.ndarray)
         """
 
-        def get_minimum_MAE_index(sub_df):
+        def get_minimum_MAE_index(sub_df: pd.Series) -> int:
             """Get the global index of the minimum MAE of each batch
 
             :return: the global index.
