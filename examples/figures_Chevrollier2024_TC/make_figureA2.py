@@ -9,15 +9,16 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-path_to_snowlaps = '/Users/au660413/Documents/AU_PhD/snowlaps-emulator'
+path_to_snowlaps = ''
 
-results_inversion_no_correction = pd.read_csv(f'{path_to_snowlaps}/data/results/results_inversion_no_anisotropy_correction_Chevrollier2024_TC.csv', 
+results_inversion_no_correction = pd.read_csv(
+    f'{path_to_snowlaps}/data/optimization_results/results_inversion_no_anisotropy_correction_Chevrollier2024_TC.csv', 
                                 index_col=0)
 results_30deg = pd.read_csv(
-    f'{path_to_snowlaps}/data/results/results_inversion_30deg_anisotropy_correction_Chevrollier2024_TC.csv', 
+    f'{path_to_snowlaps}/data/optimization_results/results_inversion_30deg_anisotropy_correction_Chevrollier2024_TC.csv', 
     index_col=0)
 results_60deg = pd.read_csv(
-    f'{path_to_snowlaps}/data/results/results_inversion_60deg_anisotropy_correction_Chevrollier2024_TC.csv', 
+    f'{path_to_snowlaps}/data/optimization_results/results_inversion_60deg_anisotropy_correction_Chevrollier2024_TC.csv', 
     index_col=0)
 
 
@@ -80,7 +81,7 @@ plt.xlabel('No anisotropy correction', fontsize=14)
 
 plt.tight_layout()
 
-plt.savefig(f"{path_to_snowlaps}/examples/figures/figa2_Chevrollier2024_TC.png", dpi=300,
-        bbox_inches='tight', pad_inches=0.1,
-        facecolor='auto', edgecolor='auto'
-    )
+# plt.savefig(f"{path_to_snowlaps}/examples/figures_Chevrollier2024_TC/figa2_Chevrollier2024_TC.png", dpi=300,
+#         bbox_inches='tight', pad_inches=0.1,
+#         facecolor='auto', edgecolor='auto'
+#     )
