@@ -6,17 +6,17 @@
 
 """
 
+from datetime import datetime
+import joblib
 import numpy as np
 import pandas as pd
-from typing import Union
-import joblib
-import tensorflow as tf
-import time
 import pysolar
 import pytz
-from timezonefinder import TimezoneFinder
-from datetime import datetime
 import sklearn.preprocessing
+import tensorflow as tf
+import time
+from timezonefinder import TimezoneFinder
+from typing import Union
 
 
 class SnowlapsEmulator:
