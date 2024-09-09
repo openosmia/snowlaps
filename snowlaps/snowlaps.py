@@ -6,17 +6,17 @@
 
 """
 
+from datetime import datetime
+import joblib
 import numpy as np
 import pandas as pd
-from typing import Union
-import joblib
-import tensorflow as tf
-import time
 import pysolar
 import pytz
-from timezonefinder import TimezoneFinder
-from datetime import datetime
 import sklearn.preprocessing
+import tensorflow as tf
+import time
+from timezonefinder import TimezoneFinder
+from typing import Union
 
 
 class SnowlapsEmulator:
@@ -150,6 +150,7 @@ class SnowlapsEmulator:
         nb_optimization_repeats: int = 20,
         optimizer: tf.keras.optimizers = tf.keras.optimizers.Adagrad(learning_rate=1.0),
         optimization_init: Union[list, None] = None,
+        optimization_wavelengths: np.ndarray = np.arange(355, 1365, 10),
         gradient_mask: list = [0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         sza_list: Union[list, None] = None,
         spectra_metadata_path: Union[str, None] = None,
@@ -184,6 +185,11 @@ class SnowlapsEmulator:
         :param optimization_init: List of initial values for each input variable of the emulator.
                                   Default to None and random initialisations.
         :type optimization_init: list, optional
+
+        :param optimization_wavelengths: An array containing the wavelengths over which to optimize.
+                                         Default to the range used in Chevrollier et al 2024, i.e.
+                                         np.arange(355, 1365, 10).
+        :type optimization_wavelengths: np.ndarray, optional
 
         :param gradient_mask: Boolean mask to enable (1) or freeze (0) the optimization of each
                               input variable of the emulator. Default to SZA frozen and all other
@@ -223,7 +229,8 @@ class SnowlapsEmulator:
         """
 
         def get_minimum_MAE_index(sub_df: pd.Series) -> int:
-            """Get the global index of the minimum MAE of each batch
+            """
+            Get the global index of the minimum MAE of each batch
 
             :return: the global index.
             :rtype: int
@@ -238,6 +245,14 @@ class SnowlapsEmulator:
             return global_index
 
         albedo_spectra = self.read_data(albedo_spectra_path)
+        albedo_spectra_wavelengths = albedo_spectra.index.values
+
+        # harmonize emulator, input albedo and optimization wavelengths
+        if set(optimization_wavelengths).issubset(set(albedo_spectra_wavelengths)):
+            albedo_spectra_mask = np.isin(
+                optimization_wavelengths, albedo_spectra_wavelengths
+            )
+            emulator_mask = np.isin(self.emulator_wavelengths, optimization_wavelengths)
 
         if sza_list is None and spectra_metadata_path is not None:
             self.spectra_metadata = self.read_data(spectra_metadata_path)
