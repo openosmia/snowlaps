@@ -82,21 +82,23 @@ def run_snowlaps(
         dict: Dict with result for display.
     """
 
-    set_of_paramters = [
-        SZA,
-        optical_radius,
-        algae_concentration,
-        liquid_water_content,
-        black_carbon_concentration,
-        mineral_dust_concentration,
-    ]
-
     my_emulator = SnowlapsEmulator()
 
-    emulator_results = my_emulator.run(parameters=set_of_paramters)
+    emulator_results = my_emulator.run(
+        parameters=[
+            SZA,
+            optical_radius,
+            algae_concentration,
+            liquid_water_content,
+            black_carbon_concentration,
+            mineral_dust_concentration,
+        ]
+    )
 
     return {
-        "albedo": emulator_results,
+        "albedo": pd.DataFrame(
+            emulator_results, index=my_emulator.emulator_wavelengths
+        ),
     }
 
 
