@@ -145,14 +145,14 @@ class SnowlapsEmulator:
 
     def optimize(
         self,
-        albedo_spectra_path: str,
+        albedo_spectra_path: Union[str, pd.DataFrame],
         nb_optimization_steps: int = 1000,
         nb_optimization_repeats: int = 20,
         optimizer: tf.keras.optimizers = tf.keras.optimizers.Adagrad(learning_rate=1.0),
         optimization_init: Union[list, None] = None,
         gradient_mask: list = [0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         sza_list: Union[list, None] = None,
-        spectra_metadata_path: Union[str, None] = None,
+        spectra_metadata_path: Union[str, pd.DataFrame, None] = None,
         save_results: bool = True,
     ) -> tuple:
         """
@@ -237,10 +237,21 @@ class SnowlapsEmulator:
 
             return global_index
 
-        albedo_spectra = self.read_data(albedo_spectra_path)
+        if isinstance(albedo_spectra_path, str):
+            albedo_spectra = self.read_data(albedo_spectra_path)
+        elif isinstance(albedo_spectra_path, pd.DataFrame):
+            albedo_spectra = albedo_spectra_path.copy()
+        else:
+            ValueError()
 
         if sza_list is None and spectra_metadata_path is not None:
-            self.spectra_metadata = self.read_data(spectra_metadata_path)
+            if isinstance(spectra_metadata_path, str):
+                self.spectra_metadata = self.read_data(spectra_metadata_path)
+            elif isinstance(spectra_metadata_path, pd.DataFrame):
+                self.spectra_metadata = spectra_metadata_path.copy()
+            else:
+                ValueError()
+
             sza_list = np.array(
                 [
                     self.compute_SZA(
