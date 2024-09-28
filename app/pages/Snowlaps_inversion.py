@@ -19,6 +19,7 @@ st.markdown("# Please drop your files below")
 
 my_emulator = SnowlapsEmulator()
 
+
 uploaded_data = st.file_uploader(
     "Choose a CSV file containing albedo spectra to be inverted for snow properties"
 )
@@ -27,6 +28,8 @@ if uploaded_data is not None:
     # Can be used wherever a "file-like" object is accepted:
     albedo_spectra = pd.read_csv(uploaded_data, index_col=0)
     st.write(albedo_spectra)
+    spectra = st.sidebar.selectbox("Choose Spectra", albedo_spectra.columns)
+
 
 uploaded_metadata = st.file_uploader(
     "Choose a CSV file containing the metadata of the albedo spectra"
@@ -37,6 +40,8 @@ if uploaded_metadata is not None:
     albedo_metadata = pd.read_csv(uploaded_metadata, index_col=0)
     st.write(albedo_metadata)
 
+
+
 def plot_albedo(spectra):
     fig = px.line(
         spectra,
@@ -46,7 +51,6 @@ def plot_albedo(spectra):
     fig.update_layout(showlegend=False)
     return fig
 
-spectra = st.sidebar.selectbox("Choose Spectra", albedo_spectra.columns)
 
 if st.button('Click Me'):
     if uploaded_data is not None and uploaded_metadata is not None:
