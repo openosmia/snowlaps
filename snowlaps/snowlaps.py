@@ -143,18 +143,16 @@ class SnowlapsEmulator:
 
         return sza
 
-    def initialize_optimizer(self, optimizer):
-        self.optimizer = optimizer
-        return self.optimizer
+    def initialize_optimizer(self, optimizer_learning_rate):
+        optimizer = tf.keras.optimizers.Adagrad(learning_rate=optimizer_learning_rate)
+        return optimizer
 
     def optimize(
         self,
         albedo_spectra_path: Union[str, pd.DataFrame],
         nb_optimization_steps: int = 1000,
         nb_optimization_repeats: int = 20,
-        tf_optimizer: tf.keras.optimizers = tf.keras.optimizers.Adagrad(
-            learning_rate=1.0
-        ),
+        optimizer_learning_rate: float = 1.0,
         optimization_init: Union[list, None] = None,
         gradient_mask: list = [0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         sza_list: Union[list, None] = None,
@@ -183,9 +181,9 @@ class SnowlapsEmulator:
                                         the optimization. Default to 20.
         :type nb_optimization_repeats: int, optional
 
-        :param tf_optimizer: Keras optimizer to use for the gradient descent algorithm. Default to
-                          Keras Adagrad optimizer with a learning rate of 1.0.
-        :type tf_optimizer: keras.src.optimizers, optional
+        :param optimizer_learning_rate: Learning rate of Keras Adagrad optimizer to use for
+                                        the gradient descent algorithm. Default to 1.0.
+        :type optimizer_learning_rate: float, optional
 
         :param optimization_init: List of initial values for each input variable of the emulator.
                                   Default to None and random initialisations.
@@ -244,11 +242,13 @@ class SnowlapsEmulator:
 
             return global_index
 
-        self.initialize_optimizer(tf_optimizer)
+        optimizer = self.initialize_optimizer(optimizer_learning_rate)
 
         if isinstance(albedo_spectra_path, str):
             albedo_spectra = self.read_data(albedo_spectra_path)
-        elif isinstance(albedo_spectra_path, Union[pd.DataFrame, pd.Series]):
+        elif isinstance(albedo_spectra_path, pd.DataFrame) or isinstance(
+            albedo_spectra_path, pd.Series
+        ):
             albedo_spectra = pd.DataFrame(albedo_spectra_path.copy())
         else:
             ValueError()
@@ -256,7 +256,9 @@ class SnowlapsEmulator:
         if sza_list is None and spectra_metadata_path is not None:
             if isinstance(spectra_metadata_path, str):
                 self.spectra_metadata = self.read_data(spectra_metadata_path)
-            elif isinstance(spectra_metadata_path, Union[pd.DataFrame, pd.Series]):
+            elif isinstance(albedo_spectra_path, pd.DataFrame) or isinstance(
+                albedo_spectra_path, pd.Series
+            ):
                 self.spectra_metadata = pd.DataFrame(spectra_metadata_path.copy()).T
             else:
                 ValueError()

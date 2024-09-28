@@ -37,6 +37,7 @@ if uploaded_metadata is not None:
     albedo_metadata = pd.read_csv(uploaded_metadata, index_col=0)
     st.write(albedo_metadata)
 
+
 def plot_albedo(spectra):
     fig = px.line(
         spectra,
@@ -46,15 +47,20 @@ def plot_albedo(spectra):
     fig.update_layout(showlegend=False)
     return fig
 
+
 spectra = st.sidebar.selectbox("Choose Spectra", albedo_spectra.columns)
 
-if st.button('Click Me'):
+if st.button("Click Me"):
     if uploaded_data is not None and uploaded_metadata is not None:
         with st.spinner("Please wait..."):
-            (full_batch_optimization_results, best_optimization_results, best_emulator_spectra,) = my_emulator.optimize(
+            (
+                full_batch_optimization_results,
+                best_optimization_results,
+                best_emulator_spectra,
+            ) = my_emulator.optimize(
                 albedo_spectra_path=albedo_spectra.loc[:, spectra],
                 spectra_metadata_path=albedo_metadata.loc[spectra, :],
-                save_results=False
+                save_results=False,
             )
 
         st.plotly_chart(plot_albedo(best_emulator_spectra))
