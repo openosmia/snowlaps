@@ -6,11 +6,6 @@ channels:
   - conda-forge
 dependencies:
   - python=3.9
-  - numpy
-  - objectpath
-  - pandas
-  - rasterio
-  - sentinelhub >= 3.4
   - pip
   - numpy
   - pandas
