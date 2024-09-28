@@ -1,0 +1,21 @@
+name: snowlaps
+channels:
+  - conda-forge/label/cf202003
+  - https://conda.software.inl.gov/public
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - numpy
+  - objectpath
+  - pandas
+  - rasterio
+  - sentinelhub >= 3.4
+  - pip
+  - numpy
+  - pandas
+  - tensorflow
+  - pysolar
+  - pytz
+  - timezonefinder
+  - sklearn
