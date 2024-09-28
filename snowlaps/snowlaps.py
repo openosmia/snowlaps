@@ -143,17 +143,23 @@ class SnowlapsEmulator:
 
         return sza
 
+    def initialize_optimizer(self, optimizer):
+        self.optimizer = optimizer
+        return self.optimizer
+
     def optimize(
         self,
         albedo_spectra_path: Union[str, pd.DataFrame],
         nb_optimization_steps: int = 1000,
         nb_optimization_repeats: int = 20,
-        optimizer: tf.keras.optimizers = tf.keras.optimizers.Adagrad(learning_rate=1.0),
+        tf_optimizer: tf.keras.optimizers = tf.keras.optimizers.Adagrad(
+            learning_rate=1.0
+        ),
         optimization_init: Union[list, None] = None,
         gradient_mask: list = [0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         sza_list: Union[list, None] = None,
         spectra_metadata_path: Union[str, pd.DataFrame, None] = None,
-        save_results: bool = True
+        save_results: bool = True,
     ) -> tuple:
         """
         Find the emulator variables and associated emulator albedo spectra that best
@@ -177,9 +183,9 @@ class SnowlapsEmulator:
                                         the optimization. Default to 20.
         :type nb_optimization_repeats: int, optional
 
-        :param optimizer: Keras optimizer to use for the gradient descent algorithm. Default to
+        :param tf_optimizer: Keras optimizer to use for the gradient descent algorithm. Default to
                           Keras Adagrad optimizer with a learning rate of 1.0.
-        :type optimizer: keras.src.optimizers, optional
+        :type tf_optimizer: keras.src.optimizers, optional
 
         :param optimization_init: List of initial values for each input variable of the emulator.
                                   Default to None and random initialisations.
@@ -238,6 +244,8 @@ class SnowlapsEmulator:
 
             return global_index
 
+        self.initialize_optimizer(tf_optimizer)
+
         if isinstance(albedo_spectra_path, str):
             albedo_spectra = self.read_data(albedo_spectra_path)
         elif isinstance(albedo_spectra_path, Union[pd.DataFrame, pd.Series]):
@@ -267,7 +275,6 @@ class SnowlapsEmulator:
 
             sza_list[self.spectra_metadata.diffuse.values == 1] = 50
 
-
         else:
             raise ValueError(
                 "Either a SZA list or acquisition dates, times and locations should be given"
@@ -278,7 +285,7 @@ class SnowlapsEmulator:
             for sza in sza_list
         ]
         print(albedo_spectra.shape[1])
-        #if albedo_spectra.ndim == 1:
+        # if albedo_spectra.ndim == 1:
         #    nb_spectra
         nb_spectra = albedo_spectra.shape[1]
 
