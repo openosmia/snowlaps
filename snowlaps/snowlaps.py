@@ -153,7 +153,7 @@ class SnowlapsEmulator:
         gradient_mask: list = [0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         sza_list: Union[list, None] = None,
         spectra_metadata_path: Union[str, pd.DataFrame, None] = None,
-        save_results: bool = True,
+        save_results: bool = True
     ) -> tuple:
         """
         Find the emulator variables and associated emulator albedo spectra that best
@@ -229,6 +229,7 @@ class SnowlapsEmulator:
             :rtype: int
 
             """
+
             index_minimum = np.where(
                 sub_df["mean_MAE"] == np.nanmin(sub_df["mean_MAE"])
             )[0][0]
@@ -239,16 +240,16 @@ class SnowlapsEmulator:
 
         if isinstance(albedo_spectra_path, str):
             albedo_spectra = self.read_data(albedo_spectra_path)
-        elif isinstance(albedo_spectra_path, pd.DataFrame):
-            albedo_spectra = albedo_spectra_path.copy()
+        elif isinstance(albedo_spectra_path, Union[pd.DataFrame, pd.Series]):
+            albedo_spectra = pd.DataFrame(albedo_spectra_path.copy())
         else:
             ValueError()
 
         if sza_list is None and spectra_metadata_path is not None:
             if isinstance(spectra_metadata_path, str):
                 self.spectra_metadata = self.read_data(spectra_metadata_path)
-            elif isinstance(spectra_metadata_path, pd.DataFrame):
-                self.spectra_metadata = spectra_metadata_path.copy()
+            elif isinstance(spectra_metadata_path, Union[pd.DataFrame, pd.Series]):
+                self.spectra_metadata = pd.DataFrame(spectra_metadata_path.copy()).T
             else:
                 ValueError()
 
@@ -263,7 +264,9 @@ class SnowlapsEmulator:
                     for idx, spectrum_metadata in self.spectra_metadata.iterrows()
                 ]
             )
-            sza_list[self.spectra_metadata.diffuse] = 50
+
+            sza_list[self.spectra_metadata.diffuse.values == 1] = 50
+
 
         else:
             raise ValueError(
@@ -274,7 +277,9 @@ class SnowlapsEmulator:
             self.scaler.transform(np.tile(np.repeat(sza, 6), (2, 1)))[0, 0]
             for sza in sza_list
         ]
-
+        print(albedo_spectra.shape[1])
+        #if albedo_spectra.ndim == 1:
+        #    nb_spectra
         nb_spectra = albedo_spectra.shape[1]
 
         constant_gradients = tf.constant(
