@@ -52,13 +52,17 @@ def plot_albedo(spectra):
     return fig
 
 
-if st.button('Click Me'):
+if st.button("Click Me"):
     if uploaded_data is not None and uploaded_metadata is not None:
         with st.spinner("Please wait..."):
-            (full_batch_optimization_results, best_optimization_results, best_emulator_spectra,) = my_emulator.optimize(
+            (
+                full_batch_optimization_results,
+                best_optimization_results,
+                best_emulator_spectra,
+            ) = my_emulator.optimize(
                 albedo_spectra_path=albedo_spectra.loc[:, spectra],
                 spectra_metadata_path=albedo_metadata.loc[spectra, :],
-                save_results=False
+                save_results=False,
             )
 
         st.plotly_chart(plot_albedo(best_emulator_spectra))
