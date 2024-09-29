@@ -345,7 +345,7 @@ class SnowlapsEmulator:
                 grads = t.gradient(COST, optimization_results) * constant_gradients
 
                 # apply gradients on all spectra
-                self.optimizer.apply_gradients(zip([grads], [optimization_results]))
+                optimizer.apply_gradients(zip([grads], [optimization_results]))
 
                 # re-assign negative values to their absolute value
                 optimization_results.assign(tf.abs(optimization_results))
