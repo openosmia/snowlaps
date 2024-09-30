@@ -14,6 +14,7 @@ st.set_page_config(
     },
 )
 
+
 st.markdown("# Snowlaps forward")
 st.markdown(
     f"""
@@ -29,27 +30,64 @@ To access other configurations, download and run the full model as Python code i
 
 st.markdown("""---""")
 
-st.sidebar.header("Solar geometry")
-SZA = st.sidebar.number_input("Solar Zenith Angle (SZA; degrees)", 0.0, 90.0, 42.0)
-optical_radius = st.sidebar.number_input(
-    "Snow optical radius (um)", 0.0, 1000.0, 500.0
-)
 
-st.sidebar.header("Light Absorbing Particles (LAPs)")
-algae_concentration = st.sidebar.number_input(
-    "Algae concentration (cells/mL)", 0.0, 1000000.0, 110000.0
-)
-black_carbon_concentration = st.sidebar.number_input(
-    "Black carbon concentration (ppb)", 0.0, 10000.0, 800.0
-)
-mineral_dust_concentration = st.sidebar.number_input(
-    "Mineral dust concentration (um)", 0.0, 780000.0, 78000.0
-)
+placeholder_title_1 = st.sidebar.empty()
+placeholder_num_1 = st.sidebar.empty()
+placeholder_num_2 = st.sidebar.empty()
+placeholder_title_2 = st.sidebar.empty()
+placeholder_num_3 = st.sidebar.empty()
+placeholder_num_4 = st.sidebar.empty()
+placeholder_num_5 = st.sidebar.empty()
+placeholder_title_3 = st.sidebar.empty()
+placeholder_num_6 = st.sidebar.empty()
+placeholder_button = st.sidebar.empty()
 
-st.sidebar.header("Water")
-liquid_water_content = st.sidebar.number_input(
-    "Liquid water content (%)", 0.0, 0.1, 0.015
-)
+
+default_values = {"SZA": 42.0, "SOR": 500.0, "AC": 110000.0, "BCC": 800.0, "MDC": 78000.0, "LWC": 0.015}
+
+
+if placeholder_button.button('Reset'):
+    st.session_state.SZA = default_values["SZA"]
+    st.session_state.SOR = default_values["SOR"]
+    st.session_state.AC = default_values["AC"]
+    st.session_state.BCC = default_values["BCC"]
+    st.session_state.MDC = default_values["MDC"]
+    st.session_state.LWC = default_values["LWC"]
+
+
+with st.sidebar:
+    placeholder_title_1.header("Solar geometry")
+
+
+    SZA = placeholder_num_1.number_input(
+        "Solar Zenith Angle (SZA; degrees)", 0.0, 90.0, value=default_values["SZA"], key="SZA"
+    )
+    optical_radius = placeholder_num_2.number_input(
+        "Snow optical radius (um)", 0.0, 1000.0, value=default_values["SOR"], key="SOR"
+    )
+
+    placeholder_title_2.header("Light Absorbing Particles (LAPs)")
+
+
+    algae_concentration = placeholder_num_3.number_input(
+        "Algae concentration (cells/mL)", 0.0, 1000000.0, value=default_values["AC"], key="AC"
+    )
+    black_carbon_concentration = placeholder_num_4.number_input(
+        "Black carbon concentration (ppb)", 0.0, 10000.0, value=default_values["BCC"], key="BCC"
+    )
+    mineral_dust_concentration = placeholder_num_5.number_input(
+        "Mineral dust concentration (um)", 0.0, 780000.0, value=default_values["MDC"], key="MDC"
+    )
+
+    placeholder_title_3.header("Water")
+
+
+    liquid_water_content = placeholder_num_6.number_input(
+        "Liquid water content (%)", 0.0, 0.1, value=default_values["LWC"], key="LWC"
+    )
+
+
+
 
 def run_snowlaps(
     SZA,
