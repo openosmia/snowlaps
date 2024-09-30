@@ -143,12 +143,16 @@ class SnowlapsEmulator:
 
         return sza
 
+    def initialize_optimizer(self, optimizer_learning_rate):
+        optimizer = tf.keras.optimizers.Adagrad(learning_rate=optimizer_learning_rate)
+        return optimizer
+
     def optimize(
         self,
         albedo_spectra_path: Union[str, pd.DataFrame],
         nb_optimization_steps: int = 1000,
         nb_optimization_repeats: int = 20,
-        optimizer: tf.keras.optimizers = tf.keras.optimizers.Adagrad(learning_rate=1.0),
+        optimizer_learning_rate: float = 1.0,
         optimization_init: Union[list, None] = None,
         gradient_mask: list = [0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         sza_list: Union[list, None] = None,
@@ -177,9 +181,9 @@ class SnowlapsEmulator:
                                         the optimization. Default to 20.
         :type nb_optimization_repeats: int, optional
 
-        :param optimizer: Keras optimizer to use for the gradient descent algorithm. Default to
-                          Keras Adagrad optimizer with a learning rate of 1.0.
-        :type optimizer: keras.src.optimizers, optional
+        :param optimizer_learning_rate: Learning rate of Keras Adagrad optimizer to use for
+                                        the gradient descent algorithm. Default to 1.0.
+        :type optimizer_learning_rate: float, optional
 
         :param optimization_init: List of initial values for each input variable of the emulator.
                                   Default to None and random initialisations.
@@ -229,6 +233,7 @@ class SnowlapsEmulator:
             :rtype: int
 
             """
+
             index_minimum = np.where(
                 sub_df["mean_MAE"] == np.nanmin(sub_df["mean_MAE"])
             )[0][0]
@@ -237,18 +242,24 @@ class SnowlapsEmulator:
 
             return global_index
 
+        optimizer = self.initialize_optimizer(optimizer_learning_rate)
+
         if isinstance(albedo_spectra_path, str):
             albedo_spectra = self.read_data(albedo_spectra_path)
-        elif isinstance(albedo_spectra_path, pd.DataFrame):
-            albedo_spectra = albedo_spectra_path.copy()
+        elif isinstance(albedo_spectra_path, pd.DataFrame) or isinstance(
+            albedo_spectra_path, pd.Series
+        ):
+            albedo_spectra = pd.DataFrame(albedo_spectra_path.copy())
         else:
             ValueError()
 
         if sza_list is None and spectra_metadata_path is not None:
             if isinstance(spectra_metadata_path, str):
                 self.spectra_metadata = self.read_data(spectra_metadata_path)
-            elif isinstance(spectra_metadata_path, pd.DataFrame):
-                self.spectra_metadata = spectra_metadata_path.copy()
+            elif isinstance(albedo_spectra_path, pd.DataFrame) or isinstance(
+                albedo_spectra_path, pd.Series
+            ):
+                self.spectra_metadata = pd.DataFrame(spectra_metadata_path.copy()).T
             else:
                 ValueError()
 
@@ -263,7 +274,8 @@ class SnowlapsEmulator:
                     for idx, spectrum_metadata in self.spectra_metadata.iterrows()
                 ]
             )
-            sza_list[self.spectra_metadata.diffuse] = 50
+
+            sza_list[self.spectra_metadata.diffuse.values == 1] = 50
 
         else:
             raise ValueError(
@@ -274,7 +286,9 @@ class SnowlapsEmulator:
             self.scaler.transform(np.tile(np.repeat(sza, 6), (2, 1)))[0, 0]
             for sza in sza_list
         ]
-
+        print(albedo_spectra.shape[1])
+        # if albedo_spectra.ndim == 1:
+        #    nb_spectra
         nb_spectra = albedo_spectra.shape[1]
 
         constant_gradients = tf.constant(
