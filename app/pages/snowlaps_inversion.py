@@ -45,18 +45,22 @@ if uploaded_metadata is not None:
 
 
 def plot_albedo(emulator, measure):
-    fig1 = px.line(measure, labels="measures")
-    fig2 = px.scatter(emulator, labels="emulator")
-    layout = go.Layout(title='Price Trend Over Time with Color Transition',
-                   xaxis=dict(title='wavelengths (microns)'),
+    fig1 = px.line(measure)
+    fig1.update_traces(line=dict(color="Blue", width=3))
+    fig2 = px.line(emulator)
+    fig2.update_traces(line=dict(color="Gray", width=2.5, dash="dash"))
+    layout = go.Layout(xaxis=dict(title='wavelengths (microns)'),
                    yaxis=dict(title='Albedo'))
-    new = {'070823_SNOWTEST1':'measures', '070823_SNOWTEST1': 'emulator'}
-    fig3 = go.Figure(data=fig1.data + fig2.data, layout=layout)
-    fig3.for_each_trace(lambda t: t.update(name = new[t.name]))
+    fig3 = go.Figure(data= fig1.data + fig2.data, layout=layout)
+    fig3.update_xaxes(range=[350, 2500])
+    series_names = ["measures", "emulator"]
+    for idx, name in enumerate(series_names):
+        fig3.data[idx].name = name
+        fig3.data[idx].hovertemplate = name
     return fig3
 
 
-if st.button("Click Me"):
+if st.button("Run inversion"):
     if uploaded_data is not None and uploaded_metadata is not None:
         with st.spinner("Please wait..."):
             (
