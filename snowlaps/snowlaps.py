@@ -256,9 +256,9 @@ class SnowlapsEmulator:
         if sza_list is None and spectra_metadata_path is not None:
             if isinstance(spectra_metadata_path, str):
                 self.spectra_metadata = self.read_data(spectra_metadata_path)
-            elif isinstance(albedo_spectra_path, pd.DataFrame) or isinstance(
-                albedo_spectra_path, pd.Series
-            ):
+            elif isinstance(albedo_spectra_path, pd.DataFrame):
+                self.spectra_metadata = pd.DataFrame(spectra_metadata_path.copy())
+            elif isinstance(albedo_spectra_path, pd.Series):
                 self.spectra_metadata = pd.DataFrame(spectra_metadata_path.copy()).T
             else:
                 ValueError()
