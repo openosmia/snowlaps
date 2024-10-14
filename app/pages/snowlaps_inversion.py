@@ -76,7 +76,7 @@ def plot_inversion(spectrum):
             x=df.index,
             y=df["measures"],
             mode="lines",
-            name="measures",
+            name=spectrum,
             line=dict(color="royalblue", width=4),
         )
     )
@@ -85,7 +85,7 @@ def plot_inversion(spectrum):
             x=df.index,
             y=df[spectrum],
             mode="lines+markers",
-            name="emulator",
+            name="snowlaps-emulator",
             line=dict(color="gray", width=5),
         )
     )
@@ -105,7 +105,7 @@ def plot_forward(spectrum, parameters):
             x=df.index,
             y=df["measures"],
             mode="lines",
-            name="measures",
+            name=spectrum,
             line=dict(color="royalblue", width=4),
         )
     )
@@ -114,7 +114,7 @@ def plot_forward(spectrum, parameters):
             x=df.index,
             y=df["emulator"],
             mode="lines+markers",
-            name="emulator",
+            name="snowlaps-emulator",
             line=dict(color="gray", width=5),
         )
     )
