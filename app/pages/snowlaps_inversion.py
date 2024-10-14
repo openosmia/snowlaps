@@ -46,14 +46,7 @@ if uploaded_metadata is not None:
 
 
 
-def run_snowlaps(
-    SZA,
-    optical_radius,
-    algae_concentration,
-    liquid_water_content,
-    black_carbon_concentration,
-    mineral_dust_concentration,
-) -> pd.DataFrame:
+def run_snowlaps(params) -> pd.DataFrame:
     """Runs biosnicar
 
     Args:
@@ -70,36 +63,24 @@ def run_snowlaps(
         Dataframe: Dataframe with result for display.
     """
 
-    my_emulator = SnowlapsEmulator()
 
-
-    emulator_results = my_emulator.run(
-        parameters=[
-            SZA,
-            optical_radius,
-            algae_concentration,
-            liquid_water_content,
-            black_carbon_concentration,
-            mineral_dust_concentration,
-        ]
-    )
+    emulator_results = my_emulator.run(parameters=params)
 
     return pd.DataFrame(emulator_results, index=my_emulator.emulator_wavelengths)
 
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def run_model():
-    with st.spinner("Please wait..."):
-        (
-            full_batch_optimization_results,
-            best_optimization_results,
-            best_emulator_spectra,
-        ) = my_emulator.optimize(
-            albedo_spectra_path=albedo_spectra,
-            spectra_metadata_path=albedo_metadata,
-            save_results=False,
-        )
+    (
+        full_batch_optimization_results,
+        best_optimization_results,
+        best_emulator_spectra,
+    ) = my_emulator.optimize(
+        albedo_spectra_path=albedo_spectra,
+        spectra_metadata_path=albedo_metadata,
+        save_results=False,
+    )
     st.session_state.best_optimization_results = best_optimization_results
     st.session_state.best_emulator_spectra = best_emulator_spectra
     return best_optimization_results
@@ -124,27 +105,20 @@ def plot_inversion(spectrum):
 
 
 
-def plot_forward(spectrum,
-                SZA,
-                optical_radius,
-                algae_concentration,
-                liquid_water_content,
-                black_carbon_concentration,
-                mineral_dust_concentration):
+def plot_forward(spectrum, params):
     df_m = pd.DataFrame({"measures": st.session_state.albedo_spectra[spectrum]})
     fig1 = go.Figure()
-    emulator_results = run_snowlaps(SZA,
-                                    optical_radius,
-                                    algae_concentration,
-                                    black_carbon_concentration,
-                                    mineral_dust_concentration,
-                                    liquid_water_content)
-    fig1.add_trace(go.Scatter(x=df_m.index, y=df_m["measures"],
+    emulator_results = run_snowlaps(params)
+    df = pd.concat([df_m, emulator_results], axis=1)
+    df = df.rename(columns={df.columns[1]: "emulator"})
+    fig1.add_trace(go.Scatter(x=df.index, y=df["measures"],
                             mode='lines',
                             name="measures",
                             line = dict(color='royalblue', width=4)))
-    print(emulator_results)
-    #fig1.add_trace(go.Scatter(x=emulator_results.index, y=emulator_results, name="emulator"))
+    fig1.add_trace(go.Scatter(x=df.index, y=df["emulator"],
+                              mode="lines+markers",
+                              name="emulator",
+                              line = dict(color='gray', width=5)))
     fig1.update_xaxes(range=[350, 2500])
     return fig1
 
@@ -165,9 +139,10 @@ def change_input():
 
 
 if st.button("Run inversion") and "inv" not in st.session_state:
-    if uploaded_data is not None and uploaded_metadata is not None:
-        best_optimization_results = run_model()
-        st.session_state.inv = True
+        if uploaded_data is not None and uploaded_metadata is not None:
+            with st.spinner("Please wait..."):
+                best_optimization_results = run_model()
+                st.session_state.inv = True
 
 
 
@@ -213,11 +188,10 @@ if "inv" in st.session_state:
             value=st.session_state.best_optimization_results.iloc[0]["lwc"]
         )
 
-
-    st.plotly_chart(plot_forward(spectrum,
-                                    SZA,
-                                    optical_radius,
-                                    algae_concentration,
-                                    liquid_water_content,
-                                    black_carbon_concentration,
-                                    mineral_dust_concentration))
+    params = [SZA,
+            optical_radius,
+            algae_concentration,
+            liquid_water_content,
+            black_carbon_concentration,
+            mineral_dust_concentration]
+    st.plotly_chart(plot_forward(spectrum, params))
