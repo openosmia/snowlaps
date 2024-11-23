@@ -8,27 +8,30 @@
 
 from snowlaps.snowlaps import SnowlapsEmulator
 import numpy as np
+import keras
 
 
+#%%
 class TestSnowlapsEmulator:
     my_emulator = SnowlapsEmulator()
 
-    test_parameters1 = [38, 500, 110000, 0.015, 800, 78000]
-    emulator_path = "../data/emulator/mlp_snw_alg_3.h5"
+    test_parameters_single = [38, 500, 110000, 0.015, 800, 78000]
+    
+    emulator_path = "./data/emulator/mlp_snw_alg_3.h5"
 
     def test_load_emulator(self) -> None:
 
-        emulator, emulator_wavelengths = my_emulator.load_emulator(self.emulator_path)
+        emulator, emulator_wavelengths = self.my_emulator.load_emulator(self.emulator_path)
 
         assert isinstance(emulator_wavelengths, np.ndarray)
-        assert emulator_wavelengths == np.arange(295, 2415, 10)
-        assert isinstance(emulator, [])
+        assert all(emulator_wavelengths == np.arange(295, 2415, 10))
+        assert isinstance(emulator, keras.src.models.sequential.Sequential)
 
     def test_run(self) -> None:
-        emulator_results_single = self.my_emulator.run(test_parameters1)
+        emulator_results_single = self.my_emulator.run(self.test_parameters_single)
 
         emulator_results_duo = self.my_emulator.run(
-            [test_parameters1, test_parameters1]
+            [self.test_parameters_single, self.test_parameters_single]
         )
 
         assert all(emulator_results_duo[0, :] == emulator_results_single)
