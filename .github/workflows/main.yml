@@ -13,7 +13,7 @@ jobs:
       - uses: snyk/actions/setup@master
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          activate-environment: snowlaps
+          activate-environment: test
           environment-file: environment.yml
           use-mamba: true
           python-version: "3.9"

@@ -1,8 +1,5 @@
 name: snowlaps
 channels:
-  - conda-forge/label/cf202003
-  - https://conda.software.inl.gov/public
-  - defaults
   - conda-forge
 dependencies:
   - python>=3.9
