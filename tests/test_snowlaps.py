@@ -16,15 +16,15 @@ class TestSnowlapsEmulator:
     test_parameters1 = [38, 500, 110000, 0.015, 800, 78000]
     emulator_path = "../data/emulator/mlp_snw_alg_3.h5"
 
-    def test_load_emulator(self):
+    def test_load_emulator(self) -> None:
 
-        self.emulator, self.emulator_wavelengths = my_emulator.load_emulator(
-            self.emulator_path
-        )
+        emulator, emulator_wavelengths = my_emulator.load_emulator(self.emulator_path)
 
-        assert isinstance(emulator_results_duo, np.ndarray)
+        assert isinstance(emulator_wavelengths, np.ndarray)
+        assert emulator_wavelengths == np.arange(295, 2415, 10)
+        assert isinstance(emulator, [])
 
-    def test_run(self):
+    def test_run(self) -> None:
         emulator_results_single = self.my_emulator.run(test_parameters1)
 
         emulator_results_duo = self.my_emulator.run(
