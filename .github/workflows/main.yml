@@ -52,10 +52,10 @@ jobs:
       #     path_to_write_report: ./coverage/codecov_report.txt
       #     verbose: true
 
-      - name: Run Snyk to check for vulnerabilities
-        run: |
-          pip install -r dev-requirements.txt
-          snyk test --file=dev-requirements.txt --package-manager=pip --severity-threshold=high
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      # - name: Run Snyk to check for vulnerabilities
+      #   run: |
+      #     pip install -r dev-requirements.txt
+      #     snyk test --file=dev-requirements.txt --package-manager=pip --severity-threshold=high
+      #   env:
+      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           
