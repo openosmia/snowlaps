@@ -13,13 +13,13 @@ import numpy as np
 class TestSnowlapsEmulator:
     my_emulator = SnowlapsEmulator()
 
+    test_parameters1 = [38, 500, 110000, 0.015, 800, 78000]
+
     def test_run(self):
-        emulator_results_single = self.my_emulator.run(
-            [38, 500, 110000, 0.015, 800, 78000]
-        )
+        emulator_results_single = self.my_emulator.run(test_parameters1)
 
         emulator_results_duo = self.my_emulator.run(
-            [[38, 500, 110000, 0.015, 800, 78000], [38, 500, 110000, 0.015, 800, 78000]]
+            [test_parameters1, test_parameters1]
         )
 
         assert all(emulator_results_duo[0, :] == emulator_results_single)
