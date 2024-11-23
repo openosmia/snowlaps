@@ -6,7 +6,6 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.9
-  - pip
   - numpy
   - pandas
   - tensorflow
@@ -14,3 +13,4 @@ dependencies:
   - pytz
   - timezonefinder
   - scikit-learn
+  - pip
