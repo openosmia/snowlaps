@@ -13,4 +13,4 @@ dependencies:
   - pysolar
   - pytz
   - timezonefinder
-  - sklearn
+  - scikit-learn
