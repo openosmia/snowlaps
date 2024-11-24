@@ -6,6 +6,7 @@
 
 """
 
+
 import streamlit as st
 
 st.write("# Welcome to Snowlaps! 👋 ❄️ ")
@@ -32,4 +33,5 @@ st.markdown(
     
 """
 )
+
 

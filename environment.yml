@@ -11,5 +11,3 @@ dependencies:
   - timezonefinder
   - scikit-learn
   - pip
-  - pip:
-    - st-pages
