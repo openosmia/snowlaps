@@ -41,6 +41,20 @@ jobs:
           pip install pytest-cov
           pytest --cov=./ --cov-report=xml
 
+      - name: Test snowlaps-emulator app
+      - uses: streamlit/streamlit-app-action@v0.0.3
+        with:
+          app-path: app/app.py
+          ruff: true
+          # Add pytest-args to output junit xml
+          pytest-args: -v --junit-xml=test-results.xml
+      - if: always()
+        uses: pmeier/pytest-results-action@v0.6.0
+        with:
+          path: test-results.xml
+          summary: true
+          display-options: fEX
+            
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v3
       #   with:
