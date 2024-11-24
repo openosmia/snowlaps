@@ -42,7 +42,7 @@ jobs:
           pytest --cov=./ --cov-report=xml
 
       - name: Test snowlaps-emulator app
-      - uses: streamlit/streamlit-app-action@v0.0.3
+        uses: streamlit/streamlit-app-action@v0.0.3
         with:
           app-path: app/app.py
           ruff: true
