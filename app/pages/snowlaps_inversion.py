@@ -8,18 +8,39 @@ import matplotlib.pyplot as plt
 import numpy as np
 import copy
 
-st.set_page_config(
-    page_title="Snowlaps Inversion",
-    page_icon="❄️",
-    initial_sidebar_state="expanded",
-    menu_items={
-        "Get Help": "https://github.com/cryobiogeo-projects/snowlaps-emulator",
-        "Report a bug": "https://github.com/cryobiogeo-projects/snowlaps-emulator/issues",
-        "About": f"# biosnicar frontent version X",
-    },
+
+st.markdown(
+    f"""
+    
+    
+### Try snowlaps to retrieve snow properties from observations! :zap:
+
+
+#### 1 - Load your files and run the inversion :boom:
+
+First, you must give snowlaps your spectral observations as a csv file
+with the spectral observations in the range 350-2500nm (typically measured with
+a field spectrometer or a hyperspectral satellite). The unique IDs of your 
+spectra are given as columns, and the wavelengths are given as index. Then, 
+the metadata associated with the spectra must be prescribed, with the spectral
+IDs as index and at minimum 1) the latitude, longitude and time for each of the
+measurements or 2) the SZA corresponding to each measurement. 
+
+Once you are done, you can click on 'run inversion' and snowlaps will look for 
+the surface properties that best explain your measurements.
+    
+:bulb: Check [the example files](https://github.com/openosmia/snowlaps-emulator/tree/main/data/spectra) 
+to see the formatting required.
+
+:hourglass_flowing_sand: We are working on making the back-end code more 
+flexible with the input file formatting. Feel free to [share your ideas](https://github.com/openosmia/snowlaps-emulator/discussions)
+with us!
+
+
+
+"""
 )
 
-st.markdown("# Please drop your files below")
 
 
 my_emulator = SnowlapsEmulator()
@@ -77,7 +98,7 @@ def plot_inversion(spectrum):
             y=df["measures"],
             mode="lines",
             name=spectrum,
-            line=dict(color="royalblue", width=4),
+            line=dict(color="royalblue", width=6),
         )
     )
     fig.add_trace(
@@ -86,11 +107,12 @@ def plot_inversion(spectrum):
             y=df[spectrum],
             mode="lines+markers",
             name="snowlaps-emulator",
-            line=dict(color="gray", width=5),
+            line=dict(color="white", width=3),
         )
     )
     fig.update_traces(marker=dict(size=5))
     fig.update_xaxes(range=[350, 2500])
+    fig.update_yaxes(range=[0, 1])
     return fig
 
 
@@ -115,11 +137,13 @@ def plot_forward(spectrum, parameters):
             y=df["emulator"],
             mode="lines+markers",
             name="snowlaps-emulator",
-            line=dict(color="gray", width=5),
+            line=dict(color="white", width=2),
         )
     )
     fig1.update_xaxes(range=[350, 2500])
+    fig1.update_yaxes(range=[0, 1])
     return fig1
+
 
 
 placeholder_title_solar_geometry = st.sidebar.empty()
@@ -146,11 +170,28 @@ if st.button("Run inversion") and "inv" not in st.session_state:
         with st.spinner("Please wait..."):
             best_optimization_results = run_model()
             st.session_state.inv = True
+            
+            
+st.markdown(
+    f"""
+    
+
+
+#### 2 - Visually inspect the inversion :female-detective: and download the results
+
+:point_down: The first graph below displays your measurement with the best fit
+found by snowlaps, for any selected measurement. 
+
+
+
+"""
+)
+
 
 
 if "inv" in st.session_state:
     spectrum = st.selectbox(
-        "Choose Spectrum",
+        "Choose spectrum",
         st.session_state.best_optimization_results.index,
         on_change=change_input,
     )
@@ -213,5 +254,19 @@ if "inv" in st.session_state:
         black_carbon_concentration,
         mineral_dust_concentration,
     ]
+    
+    st.markdown(
+        f"""
+        
+
+
+    :point_left: A side bar appeared! The second gaph lets you play with the 
+    surface parameters retrieved by snowlaps and check how it changes the albedo.
+    You can for example check what the albedo would look like if there was no algal
+    bloom, or a much bigger grain size? :snowman:
+
+
+    """
+    )
 
     st.plotly_chart(plot_forward(spectrum, parameters))

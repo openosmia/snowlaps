@@ -3,28 +3,35 @@ import pandas as pd
 import plotly.express as px
 from snowlaps.snowlaps import SnowlapsEmulator
 
-st.set_page_config(
-    page_title="Snowlaps forward",
-    page_icon="❄️",
-    initial_sidebar_state="expanded",
-    menu_items={
-        "Get Help": "https://github.com/cryobiogeo-projects/snowlaps-emulator",
-        "Report a bug": "https://github.com/cryobiogeo-projects/snowlaps-emulator/issues",
-        "About": f"# biosnicar frontent version X",
-    },
-)
+# st.set_page_config(
+#     page_title="Snowlaps forward",
+#     page_icon="❄️",
+#     initial_sidebar_state="expanded",
+#     menu_items={
+#         "Get Help": "https://github.com/cryobiogeo-projects/snowlaps-emulator",
+#         "Report a bug": "https://github.com/cryobiogeo-projects/snowlaps-emulator/issues",
+#         "About": f"# biosnicar frontent version X",
+#     },
+# )
 
 
-st.markdown("# Snowlaps forward")
+
 st.markdown(
     f"""
-snow ❄️ ice 🧊 and life :space_invader: albedo model (vX)
+    
+    
+### Try snowlaps as a fast two-stream radiative transfer model for snow! :zap:
+    
+    
+    
+:point_left: Feed the sidebar with your desired inputs and check the corresponding albedo 
+spectrum on the graph below, which you can also directly download locally. 
 
-[GitHub](https://github.com/cryobiogeo-projects/snowlaps-emulator)
-[Documentation](https://github.com/cryobiogeo-projects/snowlaps-emulator)
+:hourglass_flowing_sand: We are working on directly displaying the BBA 
+reduction associated with each light absorbing particle on the graph! 
 
-*Note that impurities are assumed to exist in the upper 2 cm of the snow or ice only, and that the grain shape in the granular layer set up is spherical.
-To access other configurations, download and run the full model as Python code instead.*
+*Note that impurities are assumed to exist in the upper 2 cm of the snow 
+only, and that the snow grain shape is set to spherical.*
 """
 )
 
@@ -33,12 +40,12 @@ st.markdown("""---""")
 
 placeholder_title_1 = st.sidebar.empty()
 placeholder_num_1 = st.sidebar.empty()
-placeholder_num_2 = st.sidebar.empty()
 placeholder_title_2 = st.sidebar.empty()
+placeholder_num_2 = st.sidebar.empty()
 placeholder_num_3 = st.sidebar.empty()
+placeholder_title_3 = st.sidebar.empty()
 placeholder_num_4 = st.sidebar.empty()
 placeholder_num_5 = st.sidebar.empty()
-placeholder_title_3 = st.sidebar.empty()
 placeholder_num_6 = st.sidebar.empty()
 placeholder_button = st.sidebar.empty()
 
@@ -56,35 +63,38 @@ if placeholder_button.button('Reset'):
 
 
 with st.sidebar:
+    
     placeholder_title_1.header("Solar geometry")
 
 
     SZA = placeholder_num_1.number_input(
         "Solar Zenith Angle (SZA; degrees)", 0.0, 90.0, value=default_values["SZA"], key="SZA"
     )
+    
+    placeholder_title_2.header("Snow structure ")
+
     optical_radius = placeholder_num_2.number_input(
-        "Snow optical radius (um)", 0.0, 1000.0, value=default_values["SOR"], key="SOR"
+        "Snow optical radius (µm)", 0.0, 1000.0, value=default_values["SOR"], key="SOR"
     )
-
-    placeholder_title_2.header("Light Absorbing Particles (LAPs)")
-
-
-    algae_concentration = placeholder_num_3.number_input(
-        "Algae concentration (cells/mL)", 0.0, 1000000.0, value=default_values["AC"], key="AC"
-    )
-    black_carbon_concentration = placeholder_num_4.number_input(
-        "Black carbon concentration (ppb)", 0.0, 10000.0, value=default_values["BCC"], key="BCC"
-    )
-    mineral_dust_concentration = placeholder_num_5.number_input(
-        "Mineral dust concentration (um)", 0.0, 780000.0, value=default_values["MDC"], key="MDC"
-    )
-
-    placeholder_title_3.header("Water")
-
-
-    liquid_water_content = placeholder_num_6.number_input(
+    
+    liquid_water_content = placeholder_num_3.number_input(
         "Liquid water content (%)", 0.0, 0.1, value=default_values["LWC"], key="LWC"
     )
+
+    placeholder_title_3.header("Light Absorbing Particles (LAPs)")
+
+
+    algae_concentration = placeholder_num_4.number_input(
+        "Algae concentration (cells/mL)", 0.0, 1000000.0, value=default_values["AC"], key="AC"
+    )
+    black_carbon_concentration = placeholder_num_5.number_input(
+        "Black carbon concentration (ppb)", 0.0, 10000.0, value=default_values["BCC"], key="BCC"
+    )
+    mineral_dust_concentration = placeholder_num_6.number_input(
+        "Mineral dust concentration (ppb)", 0.0, 780000.0, value=default_values["MDC"], key="MDC"
+    )
+
+
 
 
 

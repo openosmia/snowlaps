@@ -2,34 +2,44 @@
 # -*- coding: utf-8 -*-
 """
 
-@author: Adrien Wehrlé, Lou-Anne Chevrollier
+@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
 
 """
 
 
 import streamlit as st
 
-st.set_page_config(
-    page_title="Hello",
-    page_icon="👋",
-)
+from st_pages import add_page_title, get_nav_from_toml
 
-st.write("# Welcome to Streamlit! 👋")
+nav = get_nav_from_toml()
 
-st.markdown(
-    """
-    Streamlit is an open-source app framework built specifically for
-    Machine Learning and Data Science projects.
-    **👈 Select a demo from the sidebar** to see some examples
-    of what Streamlit can do!
-    ### Want to learn more?
-    - Check out [streamlit.io](https://streamlit.io)
-    - Jump into our [documentation](https://docs.streamlit.io)
-    - Ask a question in our [community
-        forums](https://discuss.streamlit.io)
-    ### See more complex demos
-    - Use a neural net to [analyze the Udacity Self-driving Car Image
-        Dataset](https://github.com/streamlit/demo-self-driving)
-    - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-"""
-)
+pg = st.navigation(nav)
+
+add_page_title(pg)
+
+pg.run()
+
+# st.write("# Welcome to Snowlaps! 👋 ❄️ ")
+
+# st.markdown(
+#     """
+#     Snowlaps is an open-source python package to study the albedo reducing
+#     effect of red snow algae, mineral dust and black carbon on melting snow 
+#     surfaces. The package is built on a deep-learning emulator of the radiative
+#     transfer model [biosnicar](https://biosnicar.vercel.app/) and can be used
+#     in forward and inverse mode.
+    
+#     In forward mode, the albedo of a snow surface is predicted from the solar
+#     zenith angle, snow grain size, liquid water content, and abundance of 
+#     algae, mineral dust and black carbon. In inverse mode, the surface 
+#     properties are retrieved from prescribed spectral measurements. Snowlaps
+#     also directly calculates the albedo-reduction caused by each type of 
+#     surface particles. 
+    
+#     More details and performance evaluation of the model were presented in a
+#     [recent scientific publication](https://doi.org/10.5194/egusphere-2024-2583).
+    
+#     **👈 Select a mode from the sidebar** to start working with Snowlaps!
+    
+# """
+# )
