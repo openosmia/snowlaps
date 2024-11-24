@@ -10,4 +10,6 @@ dependencies:
   - pytz
   - timezonefinder
   - scikit-learn
+  - streamlit
+  - plotly
   - pip
