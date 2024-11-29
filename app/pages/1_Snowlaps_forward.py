@@ -146,8 +146,8 @@ def plot_albedo(albedo: pd.Series):
     fig = px.line(
         result["albedo"],
         range_y=[0, 1],
-        # range_x=[0.205, 2.5],
-        labels={"index": "wavelengths (microns)", "value": "Albedo"},
+        range_x=[350, 2400],
+        labels={"index": "Wavelengths (nm)", "value": "Albedo"},
     )
     fig.update_layout(showlegend=False)
     return fig
