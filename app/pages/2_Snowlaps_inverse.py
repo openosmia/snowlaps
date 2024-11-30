@@ -91,7 +91,13 @@ def plot_inversion(spectrum):
     emulator = st.session_state.best_emulator_spectra[spectrum]
     df_m = pd.DataFrame({"measures": st.session_state.albedo_spectra[spectrum]})
     df = pd.concat([df_m, emulator], axis=1)
-    fig = go.Figure()
+    fig = go.Figure(layout=go.Layout(
+        xaxis=dict(
+        title="Wavelengths (nm)"
+    ),
+    yaxis=dict(
+        title="Albedo"
+    ) ) )
     fig.add_trace(
         go.Scatter(
             x=df.index,
@@ -111,14 +117,20 @@ def plot_inversion(spectrum):
         )
     )
     fig.update_traces(marker=dict(size=5))
-    fig.update_xaxes(range=[350, 2500])
+    fig.update_xaxes(range=[350, 2400])
     fig.update_yaxes(range=[0, 1])
     return fig
 
 
 def plot_forward(spectrum, parameters):
     df_m = pd.DataFrame({"measures": st.session_state.albedo_spectra[spectrum]})
-    fig1 = go.Figure()
+    fig1 = go.Figure(layout=go.Layout(
+        xaxis=dict(
+        title="Wavelengths (nm)"
+    ),
+    yaxis=dict(
+        title="Albedo"
+    ) ) )
     emulator_results = run_snowlaps(parameters)
     df = pd.concat([df_m, emulator_results], axis=1)
     df = df.rename(columns={df.columns[1]: "emulator"})
@@ -140,7 +152,7 @@ def plot_forward(spectrum, parameters):
             line=dict(color="white", width=2),
         )
     )
-    fig1.update_xaxes(range=[350, 2500])
+    fig1.update_xaxes(range=[350, 2400])
     fig1.update_yaxes(range=[0, 1])
     return fig1
 
@@ -148,15 +160,17 @@ def plot_forward(spectrum, parameters):
 
 placeholder_title_solar_geometry = st.sidebar.empty()
 placeholder_SZA = st.sidebar.empty()
+
+placeholder_title_snow_structure = st.sidebar.empty()
 placeholder_optical_radius = st.sidebar.empty()
+placeholder_lwc = st.sidebar.empty()
+
 
 placeholder_title_LAPs = st.sidebar.empty()
 placeholder_algae = st.sidebar.empty()
 placeholder_black_carbon = st.sidebar.empty()
 placeholder_dust = st.sidebar.empty()
 
-placeholder_title_water = st.sidebar.empty()
-placeholder_lwc = st.sidebar.empty()
 
 placeholder_button = st.sidebar.empty()
 
@@ -207,13 +221,23 @@ if "inv" in st.session_state:
             90.0,
             value=st.session_state.best_optimization_results.loc[spectrum]["sza"],
         )
+        
+        placeholder_title_snow_structure.header("Snow structure")
+
         optical_radius = placeholder_optical_radius.number_input(
-            "Snow optical radius (um)",
+            "Snow optical radius (µm)",
             0.0,
             1000.0,
             value=st.session_state.best_optimization_results.loc[spectrum][
                 "grain_size"
             ],
+        )
+        
+        liquid_water_content = placeholder_lwc.number_input(
+            "Liquid water content (%)",
+            0.0,
+            0.1,
+            value=st.session_state.best_optimization_results.loc[spectrum]["lwc"],
         )
 
         placeholder_title_LAPs.header("Light Absorbing Particles (LAPs)")
@@ -231,20 +255,14 @@ if "inv" in st.session_state:
             value=st.session_state.best_optimization_results.loc[spectrum]["bc"],
         )
         mineral_dust_concentration = placeholder_dust.number_input(
-            "Mineral dust concentration (um)",
+            "Mineral dust concentration (ppb)",
             0.0,
             780000.0,
             value=st.session_state.best_optimization_results.loc[spectrum]["dust"],
         )
 
-        placeholder_title_water.header("Water")
 
-        liquid_water_content = placeholder_lwc.number_input(
-            "Liquid water content (%)",
-            0.0,
-            0.1,
-            value=st.session_state.best_optimization_results.loc[spectrum]["lwc"],
-        )
+        
 
     parameters = [
         SZA,
