@@ -77,7 +77,7 @@ cd snowlaps
 ./start_app.sh
 ```
 
-[![./data/assets/app_forward.png]]()
+[![Snowlaps forward screenshot](./data/assets/app_forward.png)]()
 
 # Contributions
 
