@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
-@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
+
+NOTE: this script requires an installation of the main branch of the biosnicar 
+model (https://github.com/jmcook1186/biosnicar-py/tree/master)
 
 """
+
 
 # paths to the biosnicar model must be specified 
 path_to_biosnicar = ''
