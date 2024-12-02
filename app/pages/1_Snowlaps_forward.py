@@ -1,23 +1,24 @@
-import streamlit as st
 import pandas as pd
 import plotly.express as px
+import streamlit as st
+
 from snowlaps.snowlaps import SnowlapsEmulator
 
 st.markdown(
-    f"""
-    
-    
+    """
+
+
 ### Try snowlaps as a fast two-stream radiative transfer model for snow! :zap:
-    
-    
-    
-:point_left: Feed the sidebar with your desired inputs and check the corresponding albedo 
-spectrum on the graph below, which you can also directly download locally. 
 
-:hourglass_flowing_sand: We are working on directly displaying the BBA 
-reduction associated with each light absorbing particle on the graph! 
 
-*Note that impurities are assumed to exist in the upper 2 cm of the snow 
+
+:point_left: Feed the sidebar with your desired inputs and check the corresponding albedo
+spectrum on the graph below, which you can also directly download locally.
+
+:hourglass_flowing_sand: We are working on directly displaying the BBA
+reduction associated with each light absorbing particle on the graph!
+
+*Note that impurities are assumed to exist in the upper 2 cm of the snow
 only, and that the snow grain shape is set to spherical.*
 """
 )
@@ -37,10 +38,17 @@ placeholder_num_6 = st.sidebar.empty()
 placeholder_button = st.sidebar.empty()
 
 
-default_values = {"SZA": 42.0, "SOR": 500.0, "AC": 110000.0, "BCC": 800.0, "MDC": 78000.0, "LWC": 0.015}
+default_values = {
+    "SZA": 42.0,
+    "SOR": 500.0,
+    "AC": 110000.0,
+    "BCC": 800.0,
+    "MDC": 78000.0,
+    "LWC": 0.015,
+}
 
 
-if placeholder_button.button('Reset'):
+if placeholder_button.button("Reset"):
     st.session_state.SZA = default_values["SZA"]
     st.session_state.SOR = default_values["SOR"]
     st.session_state.AC = default_values["AC"]
@@ -50,40 +58,49 @@ if placeholder_button.button('Reset'):
 
 
 with st.sidebar:
-    
     placeholder_title_1.header("Solar geometry")
 
-
     SZA = placeholder_num_1.number_input(
-        "Solar Zenith Angle (SZA; degrees)", 0.0, 90.0, value=default_values["SZA"], key="SZA"
+        "Solar Zenith Angle (SZA; degrees)",
+        0.0,
+        90.0,
+        value=default_values["SZA"],
+        key="SZA",
     )
-    
+
     placeholder_title_2.header("Snow structure ")
 
     optical_radius = placeholder_num_2.number_input(
         "Snow optical radius (µm)", 0.0, 1000.0, value=default_values["SOR"], key="SOR"
     )
-    
+
     liquid_water_content = placeholder_num_3.number_input(
         "Liquid water content (%)", 0.0, 0.1, value=default_values["LWC"], key="LWC"
     )
 
     placeholder_title_3.header("Light Absorbing Particles (LAPs)")
 
-
     algae_concentration = placeholder_num_4.number_input(
-        "Algae concentration (cells/mL)", 0.0, 1000000.0, value=default_values["AC"], key="AC"
+        "Algae concentration (cells/mL)",
+        0.0,
+        1000000.0,
+        value=default_values["AC"],
+        key="AC",
     )
     black_carbon_concentration = placeholder_num_5.number_input(
-        "Black carbon concentration (ppb)", 0.0, 10000.0, value=default_values["BCC"], key="BCC"
+        "Black carbon concentration (ppb)",
+        0.0,
+        10000.0,
+        value=default_values["BCC"],
+        key="BCC",
     )
     mineral_dust_concentration = placeholder_num_6.number_input(
-        "Mineral dust concentration (ppb)", 0.0, 780000.0, value=default_values["MDC"], key="MDC"
+        "Mineral dust concentration (ppb)",
+        0.0,
+        780000.0,
+        value=default_values["MDC"],
+        key="MDC",
     )
-
-
-
-
 
 
 def run_snowlaps(
@@ -129,6 +146,7 @@ def run_snowlaps(
         ),
     }
 
+
 def plot_albedo(albedo: pd.Series):
     fig = px.line(
         result["albedo"],
@@ -138,6 +156,7 @@ def plot_albedo(albedo: pd.Series):
     )
     fig.update_layout(showlegend=False)
     return fig
+
 
 result = run_snowlaps(
     SZA,
