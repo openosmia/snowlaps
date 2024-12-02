@@ -8,6 +8,7 @@ import sklearn
 
 from snowlaps.snowlaps import SnowlapsEmulator
 
+
 class TestSnowlapsEmulator:
     my_emulator = SnowlapsEmulator()
 

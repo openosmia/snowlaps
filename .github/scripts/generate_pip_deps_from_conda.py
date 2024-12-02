@@ -15,15 +15,16 @@ Usage:
     $ python scripts/generate_pip_deps_from_conda.py --compare
 
 """
+
 import argparse
 import pathlib
 import re
 import sys
 
 if sys.version_info >= (3, 11):
-    import tomllib
+    pass
 else:
-    import tomli as tomllib
+    pass
 import yaml
 
 EXCLUDE = {"python"}

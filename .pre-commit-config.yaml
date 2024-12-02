@@ -1,0 +1,77 @@
+ci:
+    autofix_prs: false
+    autoupdate_schedule: quarterly
+repos:
+        - repo: https://github.com/pre-commit/pre-commit-hooks
+          rev: v5.0.0
+          hooks:
+                - id: check-yaml
+                - id: end-of-file-fixer
+                  exclude: \.txt$
+                - id: trailing-whitespace  # Remove trailing
+                                           # whitespaces
+                - id: check-merge-conflict
+        # Fix common spelling mistakes
+        - repo: https://github.com/codespell-project/codespell
+          rev: v2.3.0
+          hooks:
+                - id: codespell
+                  args: [
+                  '--ignore-words-list', 'alos,inout,vor',
+                    '--ignore-regex', '\bnin\b',
+                    '--'
+                  ]
+                  types_or: [python, markdown] # rst, 
+                  files: ^(snowlaps|tests)/ # docs
+
+        # Replace relative imports
+        - repo: https://github.com/astral-sh/ruff-pre-commit
+          # Ruff version.
+          rev: v0.8.1
+          hooks:
+            # Run the linter.
+            - id: ruff
+              types_or: [ python, pyi ]
+              args: ["check", "--fix" ]
+            # Run the formatter.
+            - id: ruff-format
+              types_or: [ python, pyi ]
+              
+        # Format the code aggressively using black
+        - repo: https://github.com/psf/black
+          rev: 24.10.0
+          hooks:
+                  - id: black
+                    args: [--line-length=88]
+
+        # Automatically upgrade syntax to a minimum version
+        - repo: https://github.com/asottile/pyupgrade
+          rev: v3.19.0
+          hooks:
+                - id: pyupgrade
+                  args: [--py37-plus]
+
+        # Various formattings
+        - repo: https://github.com/pre-commit/pygrep-hooks
+          rev: v1.10.0
+          hooks:
+                # Eval should never be used (can do arbitrary code
+                # execution)
+                - id: python-no-eval
+                # Enforce the use of type annotations instead of
+                # docstring type comments
+                - id: python-use-type-annotations
+
+
+        - repo: local
+          hooks:
+            # Generate pip's dev-requirements.txt from conda's
+            # dev-environment.yml to run snyk (snyk doesn't currently
+            # support conda)
+            - id: pip-to-conda
+              name: Generate pip dependency from conda
+              language: python
+              entry: .github/scripts/generate_pip_deps_from_conda.py
+              files: ^(dev-environment.yml|requirements-dev.txt)$
+              pass_filenames: false
+              additional_dependencies: [tomli, pyyaml]
