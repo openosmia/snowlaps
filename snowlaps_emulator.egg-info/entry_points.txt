@@ -1,0 +1,2 @@
+[console_scripts]
+snowlaps-cli = snowlaps.snowlaps:SnowLapsEmulator
