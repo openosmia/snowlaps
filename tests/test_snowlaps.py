@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-
-@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
-
-"""
 
 from snowlaps.snowlaps import SnowlapsEmulator
 import numpy as np
@@ -13,7 +8,7 @@ import joblib
 import sklearn
 import pandas as pd
 
-#%%
+
 class TestSnowlapsEmulator:
     
     my_emulator = SnowlapsEmulator()
