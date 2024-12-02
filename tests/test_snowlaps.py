@@ -18,7 +18,7 @@ class TestSnowlapsEmulator:
     
     my_emulator = SnowlapsEmulator()
     
-    emulator_path = "./data/emulator/mlp_snw_alg_3.h5"
+    emulator_path = "./data/emulator/snowlaps_emulator_v1.h5"
     
     scaler_path = "./data/scaler/minmax_scaler.save"
     

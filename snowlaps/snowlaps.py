@@ -22,7 +22,7 @@ import sklearn.preprocessing
 class SnowlapsEmulator:
     def __init__(
         self,
-        emulator_path: str = "./data/emulator/mlp_snw_alg_3.h5",
+        emulator_path: str = "./data/emulator/snowlaps_emulator_v1.h5",
         scaler_path: str = "./data/scaler/minmax_scaler.save",
     ) -> None:
         """
@@ -57,7 +57,7 @@ class SnowlapsEmulator:
 
         emulator = tf.keras.models.load_model(emulator_path)
 
-        if emulator_path == "./data/emulator/mlp_snw_alg_3.h5":
+        if emulator_path == "./data/emulator/snowlaps_emulator_v1.h5":
             emulator_wavelengths = np.arange(295, 2415, 10)
         return (emulator, emulator_wavelengths)
 
