@@ -1,0 +1,18 @@
+# let Black deal with line length, Ruff currently doesn't autofix E501
+line-length = 150
+
+[lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]

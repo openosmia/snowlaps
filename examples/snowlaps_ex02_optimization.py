@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
 
-@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
-
-"""
+import pandas as pd
 
 from snowlaps.snowlaps import SnowlapsEmulator
-import pandas as pd
 
 spectra_path = "./data/spectra/Chevrollier_et_al_2024_TC_spectra.csv"
 metadata_path = "./data/spectra/Chevrollier_et_al_2024_TC_metadata.csv"

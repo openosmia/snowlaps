@@ -17,23 +17,23 @@ jobs:
           environment-file: environment.yml
           use-mamba: true
           python-version: "3.9"
-          
+
       - shell: bash -l {0}
         run: |
           conda info
           conda list
-          
+
       - name: Install snowlaps-emulator
         shell: bash -l {0}
         run: |
             pip install -e .
-            
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0 
-          
+          fetch-depth: 0
+
       - name: Run tests and generate coverage report
         shell: bash -l {0}
         run: |
@@ -58,4 +58,3 @@ jobs:
       #     snyk test --file=dev-requirements.txt --package-manager=pip --severity-threshold=high
       #   env:
       #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          

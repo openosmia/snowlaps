@@ -54,13 +54,13 @@ IMPURITIES:
     COATED: False
     UNIT: 0
     CONC: [0 ,0]
-  
+
   SA:
     NAME: "sa"
     FILE: "snow_algae_empirical_Chevrollier2023.nc"
     COATED: False
     UNIT: 1
-    CONC: [0 ,0]  
+    CONC: [0 ,0]
 
   DUST:
     NAME: "dust"
@@ -85,7 +85,7 @@ PLOT:
     SAVE: False
     SAVEPATH: "./"
 
-BIOOPTICAL: 
+BIOOPTICAL:
     WET_DENSITY: 1060
     DRY_DENSITY: 684
     ABS_CFF_CALC: True
@@ -130,4 +130,3 @@ BIOOPTICAL:
     SAVE_PATH_NETCDF: "Data/OP_data/480band/lap/"
     INFO_NETCDF: "info"
     FILENAME_NETCDF: "alg"
-

@@ -1,28 +1,23 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
 
-@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
+import time
+from datetime import datetime
+from typing import Union
 
-"""
-
+import joblib
 import numpy as np
 import pandas as pd
-from typing import Union
-import joblib
-import tensorflow as tf
-import time
 import pysolar
 import pytz
-from timezonefinder import TimezoneFinder
-from datetime import datetime
 import sklearn.preprocessing
+import tensorflow as tf
+from timezonefinder import TimezoneFinder
 
 
 class SnowlapsEmulator:
     def __init__(
         self,
-        emulator_path: str = "./data/emulator/mlp_snw_alg_3.h5",
+        emulator_path: str = "./data/emulator/snowlaps_emulator_v1.h5",
         scaler_path: str = "./data/scaler/minmax_scaler.save",
     ) -> None:
         """
@@ -57,7 +52,7 @@ class SnowlapsEmulator:
 
         emulator = tf.keras.models.load_model(emulator_path)
 
-        if emulator_path == "./data/emulator/mlp_snw_alg_3.h5":
+        if emulator_path == "./data/emulator/snowlaps_emulator_v1.h5":
             emulator_wavelengths = np.arange(295, 2415, 10)
         return (emulator, emulator_wavelengths)
 
@@ -305,7 +300,7 @@ class SnowlapsEmulator:
                 size=(nb_spectra * nb_optimization_repeats, 5)
             )
 
-        # sza initalizations (constant known SZA)
+        # sza initializations (constant known SZA)
         sza_inits = tf.Variable(
             np.tile(
                 sza_spectra_transformed[:nb_spectra], (1, nb_optimization_repeats)
