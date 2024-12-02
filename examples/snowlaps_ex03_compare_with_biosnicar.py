@@ -7,7 +7,6 @@ model (https://github.com/jmcook1186/biosnicar-py/tree/master)
 
 """
 
-
 import matplotlib.pyplot as plt
 import numpy as np
 from biosnicar.adding_doubling_solver import adding_doubling_solver

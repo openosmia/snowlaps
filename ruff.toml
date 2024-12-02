@@ -1,7 +1,5 @@
-# let Black deal with line length, Ruff currently doesn't autofix E501
-ignore = ["E501", "B006"]
-
 [lint]
+
 select = [
     # pycodestyle
     "E",
@@ -17,3 +15,5 @@ select = [
     "I",
 ]
 
+# let Black deal with line length, Ruff currently doesn't autofix E501
+ignore = ["E501", "B006"]

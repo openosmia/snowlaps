@@ -168,10 +168,15 @@ def change_input():
     st.session_state.spectrum = spectrum
 
 
-if st.button("Run inversion") and "inv" not in st.session_state and uploaded_data is not None and uploaded_metadata is not None:
-        with st.spinner("Please wait..."):
-            best_optimization_results = run_model()
-            st.session_state.inv = True
+if (
+    st.button("Run inversion")
+    and "inv" not in st.session_state
+    and uploaded_data is not None
+    and uploaded_metadata is not None
+):
+    with st.spinner("Please wait..."):
+        best_optimization_results = run_model()
+        st.session_state.inv = True
 
 
 st.markdown(
