@@ -1,7 +1,5 @@
-# let Black deal with line length, Ruff currently doesn't autofix E501
-line-length = 150
-
 [lint]
+
 select = [
     # pycodestyle
     "E",
@@ -16,3 +14,6 @@ select = [
     # isort
     "I",
 ]
+
+# let Black deal with line length, Ruff currently doesn't autofix E501
+ignore = ["E501", "B006"]

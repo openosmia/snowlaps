@@ -241,9 +241,7 @@ class SnowlapsEmulator:
 
         if isinstance(albedo_spectra_path, str):
             albedo_spectra = self.read_data(albedo_spectra_path)
-        elif isinstance(albedo_spectra_path, pd.DataFrame) or isinstance(
-            albedo_spectra_path, pd.Series
-        ):
+        elif isinstance(albedo_spectra_path, (pd.DataFrame, pd.Series)):
             albedo_spectra = pd.DataFrame(albedo_spectra_path.copy())
         else:
             ValueError()
@@ -322,7 +320,7 @@ class SnowlapsEmulator:
         start_time = time.time()
         start_local_time = time.ctime(start_time)
 
-        for i in range(nb_optimization_steps):
+        for _i in range(nb_optimization_steps):
             with tf.GradientTape(watch_accessed_variables=False) as t:
                 # watch the input (remember them)
                 t.watch(optimization_results)
@@ -349,9 +347,9 @@ class SnowlapsEmulator:
         end_time = time.time()
         end_local_time = time.ctime(end_time)
         processing_time = (end_time - start_time) / 60
-        print("--- Processing time: %s minutes ---" % processing_time)
-        print("--- Start time: %s ---" % start_local_time)
-        print("--- End time: %s ---" % end_local_time)
+        print(f"--- Processing time: {processing_time} minutes ---")
+        print(f"--- Start time: {start_local_time} ---")
+        print(f"--- End time: {end_local_time} ---")
 
         results = optimization_results.numpy()
 

@@ -7,11 +7,6 @@ model (https://github.com/jmcook1186/biosnicar-py/tree/master)
 
 """
 
-# paths to the biosnicar model must be specified
-path_to_biosnicar = ""
-import sys
-
-sys.path.append(path_to_biosnicar)
 import matplotlib.pyplot as plt
 import numpy as np
 from biosnicar.adding_doubling_solver import adding_doubling_solver

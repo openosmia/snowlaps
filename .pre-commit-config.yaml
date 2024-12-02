@@ -21,7 +21,7 @@ repos:
                     '--ignore-regex', '\bnin\b',
                     '--'
                   ]
-                  types_or: [python, markdown] # rst, 
+                  types_or: [python, markdown] # rst,
                   files: ^(snowlaps|tests)/ # docs
 
         # Replace relative imports
@@ -32,11 +32,11 @@ repos:
             # Run the linter.
             - id: ruff
               types_or: [ python, pyi ]
-              args: ["check", "--fix" ]
+              args: ["--fix" ]
             # Run the formatter.
             - id: ruff-format
               types_or: [ python, pyi ]
-              
+
         # Format the code aggressively using black
         - repo: https://github.com/psf/black
           rev: 24.10.0

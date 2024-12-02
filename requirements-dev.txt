@@ -1,0 +1,18 @@
+# This file is auto-generated from dev-environment.yml, do not modify.
+# See that file for comments about the need/usage of each dependency.
+
+numpy
+pandas
+tensorflow
+pysolar
+pytz
+timezonefinder
+scikit-learn
+streamlit
+plotly
+pip
+flake8
+pytest
+pytest-lazy-fixture
+pylint
+pre-commit
