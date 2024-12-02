@@ -3,7 +3,7 @@
 """
 
 NOTE: this script requires an installation of the main branch of the biosnicar
-model (https://github.com/jmcook1186/biosnicar-py/tree/master)
+model v2.1 (https://github.com/jmcook1186/biosnicar-py/tree/master)
 
 """
 

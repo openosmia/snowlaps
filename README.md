@@ -8,7 +8,7 @@
 
 `snowlaps` is a Python package built on a deep learning emulator of
 the two-stream radiative transfer model
-[biosnicar](https://biosnicar.vercel.app/). It was originally
+[biosnicar v2.1](https://github.com/jmcook1186/biosnicar-py). It was originally
 developed to study the impact of different Light Absorbing Particles
 (LAPs) on snow spectral albedo as part of a [research
 project](https://doi.org/10.5194/egusphere-2024-2583,) in Southern
