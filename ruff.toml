@@ -1,5 +1,5 @@
 # let Black deal with line length, Ruff currently doesn't autofix E501
-line-length = 150
+ignore = ["E501", "B006"]
 
 [lint]
 select = [
@@ -16,3 +16,4 @@ select = [
     # isort
     "I",
 ]
+

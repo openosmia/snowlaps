@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-"""
-@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
-
-"""
-
 import matplotlib.gridspec as gridspec
 import matplotlib.image as image
 import matplotlib.pyplot as plt

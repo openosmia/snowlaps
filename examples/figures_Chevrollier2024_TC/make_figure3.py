@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
-
-"""
 
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
@@ -51,7 +47,7 @@ data_aws.index = pd.to_datetime(data_aws.iloc[:, 0])
 data_aws[data_aws["shortwave_incoming_W/m2"] < 0] = 0
 
 # replace days without data with similar irradiance days
-for date, row in data_aws.iterrows():
+for date, _row in data_aws.iterrows():
     if (date.day == 9) and (date.month == 7):
         data_aws["shortwave_incoming_W/m2"].loc[date] = data_aws[
             "shortwave_incoming_W/m2"
@@ -95,7 +91,7 @@ bba_wout_dust = []
 bba_wout_bc = []
 all_laps_bbas = []
 
-for i, spec in enumerate(spectra.columns):
+for i, _spec in enumerate(spectra.columns):
     all_lap_spectrum = predicted_spectra[i]
     sza = metadata.sza.iloc[i]
     all_lap_bba = calculate_bba(all_lap_spectrum, sza)

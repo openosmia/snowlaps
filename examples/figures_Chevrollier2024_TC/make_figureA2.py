@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
-
-"""
 
 import matplotlib.pyplot as plt
 import numpy as np
