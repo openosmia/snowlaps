@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-
-@authors: Adrien Wehrlé (University of Zurich), Lou-Anne Chevrollier (Aarhus University)
-
-"""
-
 import streamlit as st
 
 st.markdown(

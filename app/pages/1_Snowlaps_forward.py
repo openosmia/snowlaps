@@ -3,19 +3,6 @@ import pandas as pd
 import plotly.express as px
 from snowlaps.snowlaps import SnowlapsEmulator
 
-# st.set_page_config(
-#     page_title="Snowlaps forward",
-#     page_icon="❄️",
-#     initial_sidebar_state="expanded",
-#     menu_items={
-#         "Get Help": "https://github.com/cryobiogeo-projects/snowlaps-emulator",
-#         "Report a bug": "https://github.com/cryobiogeo-projects/snowlaps-emulator/issues",
-#         "About": f"# biosnicar frontent version X",
-#     },
-# )
-
-
-
 st.markdown(
     f"""
     
