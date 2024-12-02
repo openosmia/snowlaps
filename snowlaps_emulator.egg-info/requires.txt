@@ -1,7 +1,0 @@
-numpy
-pandas
-tensorflow
-pysolar
-pytz
-timezonefinder
-sklearn
