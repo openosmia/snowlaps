@@ -87,4 +87,4 @@ Any contribution to `snowlaps` is welcome! Feel free to add new issues, open pul
 
 If you use this code, please cite the associated publication:
 
-Chevrollier, L.-A., Wehrlé, A., Cook, J. M., Pirk, N., Benning, L. G., Anesio, A. M., and Tranter, M.: Separating the albedo reducing effect of different light absorbing particles on snow using deep learning, EGUsphere [preprint], https://doi.org/10.5194/egusphere-2024-2583, 2024.
+Chevrollier, L.-A., Wehrlé, A., Cook, J. M., Pirk, N., Benning, L. G., Anesio, A. M., and Tranter, M.: Separating the albedo-reducing effect of different light-absorbing particles on snow using deep learning, The Cryosphere, 19, 1527–1538, https://doi.org/10.5194/tc-19-1527-2025, 2025.
